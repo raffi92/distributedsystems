@@ -1,0 +1,26 @@
+package server;
+
+import java.net.*;
+import java.io.*;
+
+import protocol.Protocol;
+
+public class Server {
+	static int port;
+	
+	public static void main(String[] args){
+		port = Protocol.getServerPort();
+		ServerSocket server;
+		Socket socket;
+		try {
+			server = new ServerSocket(port);
+			while(true){
+				socket = Protocol.waitForAccept(server);
+				Protocol.reply(socket);
+			}			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
