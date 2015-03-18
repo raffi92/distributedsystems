@@ -78,11 +78,8 @@ public class Protocol {
 //		}
 			while(flag){
 			service = in.readInt();
-			System.out.println(service);
 			opt1 = in.readInt();
-			System.out.println(opt1);
 			opt2 = in.readInt();
-			System.out.println(opt2);
 			result = getResult(service, opt1, opt2);
 			out.writeInt(result);
 			//System.out.println(in.readUTF());
@@ -92,7 +89,6 @@ public class Protocol {
 			in.close();
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

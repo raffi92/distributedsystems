@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="15" version="2.0">
+<workbench progressCount="13" version="2.0">
 <workbenchAdvisor/>
 <window height="744" maximized="true" width="1024" x="65" y="24">
 <fastViewData fastViewLocation="1024"/>
@@ -44,13 +44,13 @@
 </folder>
 </info>
 </editorArea>
-<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Client.java" partName="Client.java" path="/home/raphael/distributedsystems/WorkspaceRG/DS-Assignment2/src/client/Client.java" title="Client.java" tooltip="DS-Assignment2/src/client/Client.java" workbook="DefaultEditorWorkbook">
+<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Client.java" partName="Client.java" path="/home/raphael/distributedsystems/WorkspaceRG/DS-Assignment2/src/client/Client.java" title="Client.java" tooltip="DS-Assignment2/src/client/Client.java" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DS-Assignment2/src/client/Client.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="301" selectionTopPixel="0"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="325" selectionTopPixel="0"/>
 </editor>
-<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Protocol.java" partName="Protocol.java" path="/home/raphael/distributedsystems/WorkspaceRG/DS-Assignment2/src/protocol/Protocol.java" title="Protocol.java" tooltip="DS-Assignment2/src/protocol/Protocol.java" workbook="DefaultEditorWorkbook">
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Protocol.java" partName="Protocol.java" path="/home/raphael/distributedsystems/WorkspaceRG/DS-Assignment2/src/protocol/Protocol.java" title="Protocol.java" tooltip="DS-Assignment2/src/protocol/Protocol.java" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DS-Assignment2/src/protocol/Protocol.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1160" selectionTopPixel="212"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="2351" selectionTopPixel="957"/>
 </editor>
 <editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Server.java" partName="Server.java" path="/home/raphael/distributedsystems/WorkspaceRG/DS-Assignment2/src/server/Server.java" title="Server.java" tooltip="DS-Assignment2/src/server/Server.java" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DS-Assignment2/src/server/Server.java"/>
@@ -65,8 +65,7 @@
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
 <expanded>
-<category IMemento.internal.id="Warnings"/>
-<category IMemento.internal.id="Warnings (2 items)"/>
+<category IMemento.internal.id="Warnings (5 items)"/>
 </expanded>
 <columnWidths org.eclipse.ui.ide.locationField="105" org.eclipse.ui.ide.markerType="519" org.eclipse.ui.ide.pathField="140" org.eclipse.ui.ide.resourceField="105" org.eclipse.ui.ide.severityAndDescriptionField="350"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
@@ -317,7 +316,7 @@
 </info>
 <info part="org.eclipse.ui.editorss" ratio="0.24980666" ratioLeft="323" ratioRight="970" relationship="2" relative="left"/>
 <info folder="true" part="bottom" ratio="0.5849057" ratioLeft="372" ratioRight="264" relationship="4" relative="org.eclipse.ui.editorss">
-<folder appearance="2" expanded="0">
+<folder appearance="2" expanded="2">
 <page content="org.eclipse.ui.views.ProblemView" label="LabelNotFound"/>
 <page content="org.eclipse.jdt.ui.JavadocView" label="LabelNotFound"/>
 <page content="org.eclipse.jdt.ui.SourceView" label="LabelNotFound"/>
@@ -349,25 +348,9 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/protocol/Protocol.java"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/server/Server.java"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/client/Client.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/client/Client.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/server/Server.java"/>
 </editors>
-<item historyLabel="Protocol.java" index="0">
-<position info="not_deleted" x="1692" y="0"/>
-</item>
-<item historyLabel="Server.java" index="1">
-<position info="not_deleted" x="508" y="0"/>
-</item>
-<item historyLabel="Client.java" index="2">
-<position info="not_deleted" x="417" y="0"/>
-</item>
-<item historyLabel="Protocol.java" index="0">
-<position info="not_deleted" x="1692" y="0"/>
-</item>
-<item historyLabel="Protocol.java" index="0">
-<position info="not_deleted" x="2669" y="0"/>
-</item>
-<item historyLabel="Server.java" index="1">
-<position info="not_deleted" x="508" y="0"/>
-</item>
 <item historyLabel="Client.java" index="2">
 <position info="not_deleted" x="417" y="0"/>
 </item>
@@ -497,8 +480,26 @@
 <item historyLabel="Server.java" index="1">
 <position info="not_deleted" x="508" y="0"/>
 </item>
-<item active="true" historyLabel="Protocol.java" index="0">
+<item historyLabel="Protocol.java" index="0">
 <position info="not_deleted" x="1160" y="0"/>
+</item>
+<item historyLabel="Client.java" index="3">
+<position info="not_deleted" x="301" y="0"/>
+</item>
+<item historyLabel="Server.java" index="4">
+<position info="not_deleted" x="508" y="0"/>
+</item>
+<item historyLabel="Client.java" index="3">
+<position info="not_deleted" x="325" y="0"/>
+</item>
+<item historyLabel="Protocol.java" index="0">
+<position info="not_deleted" x="2351" y="0"/>
+</item>
+<item historyLabel="Server.java" index="4">
+<position info="not_deleted" x="508" y="0"/>
+</item>
+<item active="true" historyLabel="Client.java" index="3">
+<position info="not_deleted" x="325" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
