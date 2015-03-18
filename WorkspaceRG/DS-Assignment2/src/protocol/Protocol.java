@@ -115,6 +115,8 @@ public class Protocol {
 		return serverport;
 	}
 
+
+	
 	/**
 	 * Check if entered user and master user are the same
 	 */
