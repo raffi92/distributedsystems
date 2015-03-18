@@ -9043,3 +9043,197 @@ Caused by: java.lang.ClassNotFoundException: org.eclipse.jdt.internal.junit.laun
 
 !ENTRY org.eclipse.ui 2 2 2015-03-17 11:42:11.903
 !MESSAGE Invalid property category path: myeclipse.root (bundle: org.eclipse.wst.validation.ui, propertyPage: ValidationPropertiesPage)
+!SESSION 2015-03-18 07:06:31.055 -----------------------------------------------
+eclipse.buildId=M20120914-1540
+java.version=1.8.0_31
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.ui 4 4 2015-03-18 07:08:10.357
+!MESSAGE Could not create view: 'diagramTable'.
+
+!ENTRY org.eclipse.ui 4 4 2015-03-18 07:08:10.364
+!MESSAGE Could not create view: 'net.genady.rmi.registry.RegistryInspector'.
+
+!ENTRY org.eclipse.ui 4 0 2015-03-18 07:08:10.871
+!MESSAGE Problems occurred restoring workbench.
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:08:10.871
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:08:10.871
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:08:10.871
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:08:10.871
+!MESSAGE OK
+!SUBENTRY 1 org.eclipse.ui 4 0 2015-03-18 07:08:10.871
+!MESSAGE Unable to restore perspective: Workspace - Java.
+!SUBENTRY 2 org.eclipse.ui 0 0 2015-03-18 07:08:10.871
+!MESSAGE Problems occurred restoring perspective.
+!SUBENTRY 3 org.eclipse.ui 0 0 2015-03-18 07:08:10.871
+!MESSAGE 
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:08:10.871
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:08:10.871
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:08:10.871
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:08:10.872
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:08:10.872
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:08:10.872
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:08:10.872
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:08:10.872
+!MESSAGE OK
+!SUBENTRY 2 org.eclipse.ui 4 4 2015-03-18 07:08:10.872
+!MESSAGE Could not create view: diagramTable
+!STACK 1
+org.eclipse.ui.PartInitException: Could not create view: diagramTable
+	at org.eclipse.ui.internal.ViewFactory.createView(ViewFactory.java:158)
+	at org.eclipse.ui.internal.Perspective.createReferences(Perspective.java:1249)
+	at org.eclipse.ui.internal.FastViewManager.restoreState(FastViewManager.java:925)
+	at org.eclipse.ui.internal.Perspective.restoreState(Perspective.java:1363)
+	at org.eclipse.ui.internal.WorkbenchPage.restoreState(WorkbenchPage.java:3345)
+	at org.eclipse.ui.internal.WorkbenchWindow.restoreState(WorkbenchWindow.java:2232)
+	at org.eclipse.ui.internal.Workbench.doRestoreState(Workbench.java:3687)
+	at org.eclipse.ui.internal.Workbench.access$32(Workbench.java:3629)
+	at org.eclipse.ui.internal.Workbench$60.run(Workbench.java:2329)
+	at org.eclipse.ui.internal.Workbench.runStartupWithProgress(Workbench.java:2026)
+	at org.eclipse.ui.internal.Workbench.restoreState(Workbench.java:2327)
+	at org.eclipse.ui.internal.Workbench.access$30(Workbench.java:2298)
+	at org.eclipse.ui.internal.Workbench$54.run(Workbench.java:2144)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.ui.internal.Workbench.restoreState(Workbench.java:2088)
+	at org.eclipse.ui.internal.WorkbenchConfigurer.restoreState(WorkbenchConfigurer.java:183)
+	at org.eclipse.ui.application.WorkbenchAdvisor$1.run(WorkbenchAdvisor.java:781)
+!SUBENTRY 3 org.eclipse.ui 4 0 2015-03-18 07:08:10.874
+!MESSAGE Could not create view: diagramTable
+!SUBENTRY 2 org.eclipse.ui 4 4 2015-03-18 07:08:10.874
+!MESSAGE Could not create view: net.genady.rmi.registry.RegistryInspector
+!STACK 1
+org.eclipse.ui.PartInitException: Could not create view: net.genady.rmi.registry.RegistryInspector
+	at org.eclipse.ui.internal.ViewFactory.createView(ViewFactory.java:158)
+	at org.eclipse.ui.internal.Perspective.createReferences(Perspective.java:1249)
+	at org.eclipse.ui.internal.FastViewManager.restoreState(FastViewManager.java:925)
+	at org.eclipse.ui.internal.Perspective.restoreState(Perspective.java:1363)
+	at org.eclipse.ui.internal.WorkbenchPage.restoreState(WorkbenchPage.java:3345)
+	at org.eclipse.ui.internal.WorkbenchWindow.restoreState(WorkbenchWindow.java:2232)
+	at org.eclipse.ui.internal.Workbench.doRestoreState(Workbench.java:3687)
+	at org.eclipse.ui.internal.Workbench.access$32(Workbench.java:3629)
+	at org.eclipse.ui.internal.Workbench$60.run(Workbench.java:2329)
+	at org.eclipse.ui.internal.Workbench.runStartupWithProgress(Workbench.java:2026)
+	at org.eclipse.ui.internal.Workbench.restoreState(Workbench.java:2327)
+	at org.eclipse.ui.internal.Workbench.access$30(Workbench.java:2298)
+	at org.eclipse.ui.internal.Workbench$54.run(Workbench.java:2144)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.ui.internal.Workbench.restoreState(Workbench.java:2088)
+	at org.eclipse.ui.internal.WorkbenchConfigurer.restoreState(WorkbenchConfigurer.java:183)
+	at org.eclipse.ui.application.WorkbenchAdvisor$1.run(WorkbenchAdvisor.java:781)
+!SUBENTRY 3 org.eclipse.ui 4 0 2015-03-18 07:08:10.874
+!MESSAGE Could not create view: net.genady.rmi.registry.RegistryInspector
+!SUBENTRY 2 org.eclipse.ui 4 0 2015-03-18 07:08:10.875
+!MESSAGE Could not find view: diagramTable
+!SUBENTRY 2 org.eclipse.ui 4 0 2015-03-18 07:08:10.875
+!MESSAGE Could not find view: net.genady.rmi.registry.RegistryInspector
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:08:10.875
+!MESSAGE OK
+!SESSION 2015-03-18 07:09:05.721 -----------------------------------------------
+eclipse.buildId=M20120914-1540
+java.version=1.8.0_31
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.ui 4 4 2015-03-18 07:09:13.704
+!MESSAGE Could not create view: 'diagramTable'.
+
+!ENTRY org.eclipse.ui 4 4 2015-03-18 07:09:13.710
+!MESSAGE Could not create view: 'net.genady.rmi.registry.RegistryInspector'.
+
+!ENTRY org.eclipse.ui 4 0 2015-03-18 07:09:14.274
+!MESSAGE Problems occurred restoring workbench.
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:09:14.274
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:09:14.274
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:09:14.274
+!MESSAGE OK
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:09:14.274
+!MESSAGE OK
+!SUBENTRY 1 org.eclipse.ui 4 0 2015-03-18 07:09:14.274
+!MESSAGE Unable to restore perspective: Workspace - Java.
+!SUBENTRY 2 org.eclipse.ui 0 0 2015-03-18 07:09:14.275
+!MESSAGE Problems occurred restoring perspective.
+!SUBENTRY 3 org.eclipse.ui 0 0 2015-03-18 07:09:14.275
+!MESSAGE 
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:09:14.275
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:09:14.275
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:09:14.280
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:09:14.280
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:09:14.280
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:09:14.280
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:09:14.280
+!MESSAGE OK
+!SUBENTRY 2 unknown 0 0 2015-03-18 07:09:14.280
+!MESSAGE OK
+!SUBENTRY 2 org.eclipse.ui 4 4 2015-03-18 07:09:14.280
+!MESSAGE Could not create view: diagramTable
+!STACK 1
+org.eclipse.ui.PartInitException: Could not create view: diagramTable
+	at org.eclipse.ui.internal.ViewFactory.createView(ViewFactory.java:158)
+	at org.eclipse.ui.internal.Perspective.createReferences(Perspective.java:1249)
+	at org.eclipse.ui.internal.FastViewManager.restoreState(FastViewManager.java:925)
+	at org.eclipse.ui.internal.Perspective.restoreState(Perspective.java:1363)
+	at org.eclipse.ui.internal.WorkbenchPage.restoreState(WorkbenchPage.java:3345)
+	at org.eclipse.ui.internal.WorkbenchWindow.restoreState(WorkbenchWindow.java:2232)
+	at org.eclipse.ui.internal.Workbench.doRestoreState(Workbench.java:3687)
+	at org.eclipse.ui.internal.Workbench.access$32(Workbench.java:3629)
+	at org.eclipse.ui.internal.Workbench$60.run(Workbench.java:2329)
+	at org.eclipse.ui.internal.Workbench.runStartupWithProgress(Workbench.java:2026)
+	at org.eclipse.ui.internal.Workbench.restoreState(Workbench.java:2327)
+	at org.eclipse.ui.internal.Workbench.access$30(Workbench.java:2298)
+	at org.eclipse.ui.internal.Workbench$54.run(Workbench.java:2144)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.ui.internal.Workbench.restoreState(Workbench.java:2088)
+	at org.eclipse.ui.internal.WorkbenchConfigurer.restoreState(WorkbenchConfigurer.java:183)
+	at org.eclipse.ui.application.WorkbenchAdvisor$1.run(WorkbenchAdvisor.java:781)
+!SUBENTRY 3 org.eclipse.ui 4 0 2015-03-18 07:09:14.282
+!MESSAGE Could not create view: diagramTable
+!SUBENTRY 2 org.eclipse.ui 4 4 2015-03-18 07:09:14.282
+!MESSAGE Could not create view: net.genady.rmi.registry.RegistryInspector
+!STACK 1
+org.eclipse.ui.PartInitException: Could not create view: net.genady.rmi.registry.RegistryInspector
+	at org.eclipse.ui.internal.ViewFactory.createView(ViewFactory.java:158)
+	at org.eclipse.ui.internal.Perspective.createReferences(Perspective.java:1249)
+	at org.eclipse.ui.internal.FastViewManager.restoreState(FastViewManager.java:925)
+	at org.eclipse.ui.internal.Perspective.restoreState(Perspective.java:1363)
+	at org.eclipse.ui.internal.WorkbenchPage.restoreState(WorkbenchPage.java:3345)
+	at org.eclipse.ui.internal.WorkbenchWindow.restoreState(WorkbenchWindow.java:2232)
+	at org.eclipse.ui.internal.Workbench.doRestoreState(Workbench.java:3687)
+	at org.eclipse.ui.internal.Workbench.access$32(Workbench.java:3629)
+	at org.eclipse.ui.internal.Workbench$60.run(Workbench.java:2329)
+	at org.eclipse.ui.internal.Workbench.runStartupWithProgress(Workbench.java:2026)
+	at org.eclipse.ui.internal.Workbench.restoreState(Workbench.java:2327)
+	at org.eclipse.ui.internal.Workbench.access$30(Workbench.java:2298)
+	at org.eclipse.ui.internal.Workbench$54.run(Workbench.java:2144)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:42)
+	at org.eclipse.ui.internal.Workbench.restoreState(Workbench.java:2088)
+	at org.eclipse.ui.internal.WorkbenchConfigurer.restoreState(WorkbenchConfigurer.java:183)
+	at org.eclipse.ui.application.WorkbenchAdvisor$1.run(WorkbenchAdvisor.java:781)
+!SUBENTRY 3 org.eclipse.ui 4 0 2015-03-18 07:09:14.282
+!MESSAGE Could not create view: net.genady.rmi.registry.RegistryInspector
+!SUBENTRY 2 org.eclipse.ui 4 0 2015-03-18 07:09:14.282
+!MESSAGE Could not find view: diagramTable
+!SUBENTRY 2 org.eclipse.ui 4 0 2015-03-18 07:09:14.282
+!MESSAGE Could not find view: net.genady.rmi.registry.RegistryInspector
+!SUBENTRY 1 unknown 0 0 2015-03-18 07:09:14.282
+!MESSAGE OK

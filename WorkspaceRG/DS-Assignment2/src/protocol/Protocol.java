@@ -71,23 +71,22 @@ public class Protocol {
 		int result = 0;
 		Boolean flag = true;
 		try {
-		DataInputStream in = new DataInputStream(server.getInputStream());		
-		DataOutputStream out = new DataOutputStream(server.getOutputStream());
-//		while(!success){
-//		out.writeBoolean(checkLogin(in.readUTF()));
-//		}
+			DataInputStream in = new DataInputStream(server.getInputStream());		
+			DataOutputStream out = new DataOutputStream(server.getOutputStream());
+	//		while(!success){
+	//		out.writeBoolean(checkLogin(in.readUTF()));
+	//		}
 			while(flag){
-			service = in.readInt();
-			System.out.println(service);
-			opt1 = in.readInt();
-			System.out.println(opt1);
-			opt2 = in.readInt();
-			System.out.println(opt2);
-			result = getResult(service, opt1, opt2);
-			out.writeInt(result);
-			//System.out.println(in.readUTF());
-			//ask service again out.writeUTF(), client in,out; server in.read if true => flag for while
-			flag = false;			
+				service = in.readInt();
+				System.out.println(service);
+				opt1 = in.readInt();
+				System.out.println(opt1);
+				opt2 = in.readInt();
+				System.out.println(opt2);
+				result = getResult(service, opt1, opt2);
+				out.writeInt(result);
+				
+				flag = false;			
 			}
 			in.close();
 			out.close();
@@ -237,7 +236,7 @@ public class Protocol {
 			break;
 		case 4:
 			int fact = 1;
-			for(int i = 1; i <= opt2; i++){
+			for(int i = 1; i <= opt; i++){
 				fact *= i;
 			}
 			result = fact;
