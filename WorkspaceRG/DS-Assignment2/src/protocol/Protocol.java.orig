@@ -5,12 +5,12 @@ import java.util.Scanner;
 import java.io.*;
 
 public class Protocol {
-	private static int serverport = 8000;
+	private static int serverport = 8002;
 	private static String master = "master";
 	private static int count = 0;
 	private static int cache[];
 	private static Boolean success = false;
-	private static Scanner input = new Scanner(System.in);
+	private static Scanner input = new Scanner(System.in);		// read from commandline (client)
 	/**
 	 * Client invokes this method
 	 * sends Operation and Operators to Server
@@ -75,6 +75,16 @@ public class Protocol {
 				success = tmp;
 			}
 			while(flag){
+<<<<<<< HEAD
+			service = in.readInt();
+			opt1 = in.readInt();
+			opt2 = in.readInt();
+			result = getResult(service, opt1, opt2);
+			out.writeInt(result);
+			//System.out.println(in.readUTF());
+			//ask service again out.writeUTF(), client in,out; server in.read if true => flag for while
+			flag = false;			
+=======
 				if (in.available() > 0){
 					service = in.readInt();
 					opt1 = in.readInt();
@@ -83,11 +93,11 @@ public class Protocol {
 					out.writeInt(result);
 					flag = false;
 				}
+>>>>>>> 7cc68dda12259a166959b7308b7f2361794da76b
 			}
 			in.close();
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -100,8 +110,6 @@ public class Protocol {
 		return serverport;
 	}
 
-
-	
 	/**
 	 * Check if entered user and master user are the same
 	 */
@@ -134,7 +142,6 @@ public class Protocol {
 		int num1 = 0;
 		int num2 = 0;
 		Boolean flag = true;
-		Scanner in = new Scanner(System.in);
 		System.out.println("Please choose your service!");
 		System.out.println("1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial");
 		

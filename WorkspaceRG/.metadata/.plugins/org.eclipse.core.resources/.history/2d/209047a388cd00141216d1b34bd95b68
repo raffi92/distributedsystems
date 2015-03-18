@@ -10,7 +10,7 @@ public class Protocol {
 	private static int count = 0;
 	private static int cache[];
 	private static Boolean success = false;
-	private static Scanner input = new Scanner(System.in);
+	private static Scanner input = new Scanner(System.in);		// read from commandline (client)
 	/**
 	 * Client invokes this method
 	 * sends Operation and Operators to Server
