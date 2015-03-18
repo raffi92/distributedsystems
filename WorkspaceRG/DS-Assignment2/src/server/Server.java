@@ -26,17 +26,15 @@ public class Server {
 			try {
 				new Listener(server.accept()).start();
 			} catch (IOException e) {
-				if(e.getMessage().equals("Socket closed")){
+				if (e.getMessage().equals("Socket closed")) {
 					System.out.println("Server shutdown");
 					running = false;
-				}
-				else {
+				} else {
 					e.printStackTrace();
 				}
-				
+
 			}
 		}
-		
 
 	}
 
@@ -51,7 +49,7 @@ public class Server {
 			System.out.println("Just connected to client"
 					+ socket.getRemoteSocketAddress());
 			new Protocol().reply(socket);
-			
+
 			try {
 				socket.close();
 			} catch (IOException e) {
@@ -60,7 +58,7 @@ public class Server {
 			}
 		}
 	}
-	
+
 	private static class CloseListener extends Thread {
 		public void run() {
 			Scanner input = new Scanner(System.in);
