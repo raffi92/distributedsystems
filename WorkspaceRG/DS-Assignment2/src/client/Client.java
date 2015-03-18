@@ -11,7 +11,8 @@ public class Client {
 		int serverport = Protocol.getServerPort();
 		try {
 			Socket client = new Socket("localhost",serverport);
-			Protocol.request(client);
+			Protocol proto = new Protocol();
+			proto.request(client);
 			client.close();
 		} catch (UnknownHostException error) {
 			System.out.println("Server not found");

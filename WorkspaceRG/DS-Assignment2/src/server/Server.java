@@ -26,21 +26,17 @@ public class Server {
 			try {
 				new Listener(server.accept()).start();
 			} catch (IOException e) {
-				if(e.getMessage().equals("Socket is closed")){
+				if(e.getMessage().equals("Socket closed")){
 					System.out.println("Server shutdown");
 					running = false;
 				}
-				else 
+				else {
 					e.printStackTrace();
+				}
 				
 			}
 		}
-		try {
-			server.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 	}
 
@@ -54,7 +50,8 @@ public class Server {
 		public void run() {
 			System.out.println("Just connected to client"
 					+ socket.getRemoteSocketAddress());
-			Protocol.reply(socket);
+			new Protocol().reply(socket);
+			
 			try {
 				socket.close();
 			} catch (IOException e) {
@@ -74,6 +71,7 @@ public class Server {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			input.close();
 		}
 	}
 }

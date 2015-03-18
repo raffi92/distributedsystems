@@ -5,18 +5,21 @@ import java.util.Scanner;
 import java.io.*;
 
 public class Protocol {
+	// static variables remain the same for all clients
 	private static int serverport = 8002;
 	private static String master = "master";
 	private static int count = 0;
-	private static int cache[];
-	private static Boolean success = false;
-	private static Scanner input = new Scanner(System.in);		// read from commandline (client)
+	
+	// client specific variables
+	private int cache[];
+	private Boolean success = false;
+	private Scanner input = new Scanner(System.in);		// read from commandline (client)
 	/**
 	 * Client invokes this method
 	 * sends Operation and Operators to Server
 	 * and gets response
 	 */
-	public static void request(Socket client){
+	public void request(Socket client){
 		try {
 			OutputStream sendToServer = client.getOutputStream();
 			DataOutputStream out = new DataOutputStream(sendToServer);	
@@ -27,12 +30,12 @@ public class Protocol {
 			while(!success){
 				out.writeUTF(name);
 				success = in.readBoolean();
-				if(success != true && count < 3){
+				if(success != true && count < 2){
 					count++;
 					System.out.println("Wrong master user! Please try again!");
 					name = enterName();
 				}
-				else if (count >= 3){
+				else if (count >= 2){
 					System.out.println("You've entered the master user three times wrong! Program shutdown");
 					System.exit(0);
 				}
@@ -57,7 +60,7 @@ public class Protocol {
 	 * Server invokes this method
 	 * Server gets message from client and replies the result
 	 */
-	public static void reply(Socket server){
+	public void reply(Socket server){
 		int service = 0;
 		int opt1 = 0;
 		int opt2 = 0;
@@ -69,10 +72,19 @@ public class Protocol {
 			DataOutputStream out = new DataOutputStream(server.getOutputStream());
 			
 			while(!success){
-				String username = in.readUTF();
-				boolean tmp = checkLogin(username);
-				out.writeBoolean(tmp);
-				success = tmp;
+				try {
+					String username = in.readUTF();
+					boolean tmp = checkLogin(username);
+					out.writeBoolean(tmp);
+					success = tmp;
+				} catch (EOFException e){
+					System.out.println("Client " + server.getRemoteSocketAddress() + " terminated");
+					// set flags to terminate client
+					flag = false;
+					success = true;
+				}
+				
+				
 			}
 			while(flag){
 				if (in.available() > 0){
@@ -113,7 +125,7 @@ public class Protocol {
 	/**
 	 * Enter your name
 	 */
-	private static String enterName() {
+	private String enterName() {
 		String user= "";
 		System.out.println("\nPlease enter your username!\n");
 		while(user.length() == 0)
@@ -127,7 +139,7 @@ public class Protocol {
 	 * First select which service the client prefers
 	 * then enters the operators for the service
 	 */
-	private static void showOperations(){
+	private void showOperations(){
 		int servicenr = 0;
 		int num1 = 0;
 		int num2 = 0;
@@ -186,7 +198,7 @@ public class Protocol {
 	 * @param op1
 	 * @param op2
 	 */
-	public static void fillCache(int service, int op1, int op2){
+	public void fillCache(int service, int op1, int op2){
 		cache = new int[3];
 		cache[0] = service;
 		cache[1] = op1;
@@ -201,7 +213,7 @@ public class Protocol {
 	 * 4...Fac
 	 * @return result
 	 */
-	public static int getResult(int service, int opt, int opt2){
+	public int getResult(int service, int opt, int opt2){
 		int result = 0;
 		switch(service){
 		case 1:
