@@ -13,7 +13,7 @@ public class Protocol {
 	// client specific variables
 	private int cache[];
 	private Boolean success = false;
-	private Scanner input = new Scanner(System.in);
+	private Scanner input = new Scanner(System.in);		// read from commandline (client)
 	/**
 	 * Client invokes this method
 	 * sends Operation and Operators to Server
