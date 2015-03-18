@@ -6,10 +6,11 @@ import java.io.*;
 
 public class Protocol {
 	private static int serverport = 8002;
-	private static String master = "Raphael";
+	private static String master = "master";
 	private static int count = 0;
 	private static int cache[];
 	private static Boolean success = false;
+	private static Scanner input = new Scanner(System.in);		// read from commandline (client)
 	/**
 	 * Client invokes this method
 	 * sends Operation and Operators to Server
@@ -18,34 +19,25 @@ public class Protocol {
 	public static void request(Socket client){
 		try {
 			OutputStream sendToServer = client.getOutputStream();
-			DataOutputStream out = new DataOutputStream(sendToServer);
-			BufferedReader buffer=new BufferedReader(new InputStreamReader(System.in));	
+			DataOutputStream out = new DataOutputStream(sendToServer);	
 			InputStream receivedFromServer = client.getInputStream();
 			DataInputStream in = new DataInputStream(receivedFromServer);
-//			while(!success){
-//				enterName(out);
-//				success = in.readBoolean();
-//				if(success != true && count != 3){
-//					count++;
-//					System.out.println("Wrong master user! Please try again!");
-//				}
-//				else{
-//					System.out.println("You've entered the master user three times wrong! Program shutdown");
-//					System.exit(0);
-//				}
-//			}
-//			out.close(); in.close();
+			String name = enterName();
 			
-			while(!checkLogin(enterName(out))){
-				count++;
-				if(count != 3){
-					System.out.println("Wrong master user! Please try again!");			
+			while(!success){
+				out.writeUTF(name);
+				success = in.readBoolean();
+				if(success != true && count < 3){
+					count++;
+					System.out.println("Wrong master user! Please try again!");
+					name = enterName();
 				}
-				else{
+				else if (count >= 3){
 					System.out.println("You've entered the master user three times wrong! Program shutdown");
 					System.exit(0);
 				}
 			}
+
 			System.out.println("You've logged in succesfully");
 			showOperations();
 			for(int i = 0; i < cache.length; i++){
@@ -54,6 +46,7 @@ public class Protocol {
 			System.out.println("Result from Server:\n" + in.readInt());
 			out.close();
 			in.close();
+			input.close();
 		} catch (IOException e) {
 			System.out.println("Something in the client request went wrong");
 		}
@@ -70,23 +63,26 @@ public class Protocol {
 		int opt2 = 0;
 		int result = 0;
 		Boolean flag = true;
+		
 		try {
 			DataInputStream in = new DataInputStream(server.getInputStream());		
 			DataOutputStream out = new DataOutputStream(server.getOutputStream());
-	//		while(!success){
-	//		out.writeBoolean(checkLogin(in.readUTF()));
-	//		}
+			
+			while(!success){
+				String username = in.readUTF();
+				boolean tmp = checkLogin(username);
+				out.writeBoolean(tmp);
+				success = tmp;
+			}
 			while(flag){
-				service = in.readInt();
-				System.out.println(service);
-				opt1 = in.readInt();
-				System.out.println(opt1);
-				opt2 = in.readInt();
-				System.out.println(opt2);
-				result = getResult(service, opt1, opt2);
-				out.writeInt(result);
-				
-				flag = false;			
+				if (in.available() > 0){
+					service = in.readInt();
+					opt1 = in.readInt();
+					opt2 = in.readInt();
+					result = getResult(service, opt1, opt2);
+					out.writeInt(result);
+					flag = false;
+				}
 			}
 			in.close();
 			out.close();
@@ -105,22 +101,10 @@ public class Protocol {
 	}
 
 	/**
-	 * Server waits till there is an connection with client
-	 */
-	public static Socket waitForAccept(ServerSocket server) {
-		try {
-			return server.accept();			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;		
-	}
-	
-	/**
 	 * Check if entered user and master user are the same
 	 */
 	public static Boolean checkLogin(String user){
-		if(master.compareTo(user) == 0)
+		if(master.equals(user))
 			return true;
 		else
 			return false;
@@ -129,18 +113,13 @@ public class Protocol {
 	/**
 	 * Enter your name
 	 */
-	private static String enterName(DataOutputStream out) {
-		String user=null;
+	private static String enterName() {
+		String user= "";
 		System.out.println("\nPlease enter your username!\n");
-		//OUT.WRITE verwenden!!!!!
-		Scanner in = new Scanner(System.in);	
-		BufferedReader buffer=new BufferedReader(new InputStreamReader(System.in));
-		try {
-			//out.writeUTF(in.next());
-			user = buffer.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		while(user.length() == 0)
+			user = input.next();
+		
+		System.out.println(user);
 		return user;
 	}
 	
@@ -153,51 +132,51 @@ public class Protocol {
 		int num1 = 0;
 		int num2 = 0;
 		Boolean flag = true;
-		Scanner in = new Scanner(System.in);
 		System.out.println("Please choose your service!");
 		System.out.println("1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial");
-		servicenr = in.nextInt();
+		
+		servicenr = input.nextInt();
 		while(flag){
-		switch(servicenr){
-		case 1:
-			System.out.println("Please enter 2 numbers which you want to sum up");
-			System.out.println("Number1:");
-			num1 = in.nextInt();
-			System.out.println("Number2:");
-			num2 = in.nextInt();
-			fillCache(1,num1,num2);
-			flag = false;
-			break;
-		case 2:
-			System.out.println("Please enter 2 numbers which you want to subtract");
-			System.out.println("Number1:");
-			num1 = in.nextInt();
-			System.out.println("Number2:");
-			num2 = in.nextInt();
-			fillCache(2,num1,num2);
-			flag = false;
-			break;
-		case 3:
-			System.out.println("Please enter 2 numbers which you want to multiply");
-			System.out.println("Number1:");
-			num1 = in.nextInt();
-			System.out.println("Number2:");
-			num2 = in.nextInt();
-			fillCache(3,num1,num2);
-			flag = false;
-			break;
-		case 4:
-			System.out.println("Please enter one number of which you prefer the factorial");
-			System.out.println("Number:");
-			num1 = in.nextInt();
-			num2 = 0;
-			fillCache(4,num1,num2);
-			flag = false;
-			break;
-		default:
-			System.out.println("Operation not known, try again!");
-			break;
-		}
+			switch(servicenr){
+				case 1:
+					System.out.println("Please enter 2 numbers which you want to sum up");
+					System.out.println("Number1:");
+					num1 = input.nextInt();
+					System.out.println("Number2:");
+					num2 = input.nextInt();
+					fillCache(1,num1,num2);
+					flag = false;
+					break;
+				case 2:
+					System.out.println("Please enter 2 numbers which you want to subtract");
+					System.out.println("Number1:");
+					num1 = input.nextInt();
+					System.out.println("Number2:");
+					num2 = input.nextInt();
+					fillCache(2,num1,num2);
+					flag = false;
+					break;
+				case 3:
+					System.out.println("Please enter 2 numbers which you want to multiply");
+					System.out.println("Number1:");
+					num1 = input.nextInt();
+					System.out.println("Number2:");
+					num2 = input.nextInt();
+					fillCache(3,num1,num2);
+					flag = false;
+					break;
+				case 4:
+					System.out.println("Please enter one number of which you prefer the factorial");
+					System.out.println("Number:");
+					num1 = input.nextInt();
+					num2 = 0;
+					fillCache(4,num1,num2);
+					flag = false;
+					break;
+				default:
+					System.out.println("Operation not known, try again!");
+					break;
+			}			
 		}
 	}
 	
