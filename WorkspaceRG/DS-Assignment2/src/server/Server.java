@@ -20,7 +20,7 @@ public class Server {
 			e1.printStackTrace();
 		}
 
-		System.out.println("Waiting for client");
+		System.out.println("Waiting for client\nShutdown with 'quit'");
 		new CloseListener().start();
 		while (running) {
 			try {
