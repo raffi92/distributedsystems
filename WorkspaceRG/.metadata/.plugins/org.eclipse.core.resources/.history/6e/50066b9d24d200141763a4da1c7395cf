@@ -26,6 +26,7 @@ public class ServiceAnnouncer {
 		try {
 			socket = new DatagramSocket(port);
 			while (true) {
+
 				packet = new DatagramPacket(data, data.length);
 				System.out.println("Waiting for message...");
 				socket.receive(packet);
@@ -35,7 +36,6 @@ public class ServiceAnnouncer {
 			    byte[] data = packet.getData();
 			    
 			    System.out.printf("Received message from %s of port %d with length %d: %s", address, client, length, new String(data,0,length));
-			    System.out.println("");
 			}
 		} catch (IOException e) {
 			System.out.println("Something went wrong with packet receiving/sending");
