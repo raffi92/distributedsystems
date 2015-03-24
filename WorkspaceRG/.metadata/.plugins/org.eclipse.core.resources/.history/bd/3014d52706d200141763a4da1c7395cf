@@ -1,0 +1,104 @@
+package ex3;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+/**
+ * Locates a Service by sending an UDP Broadcast.
+ * 
+ */
+public class ServiceLocator {
+	private int port;
+	private int timeout;
+	private final byte[] buffer = new byte[50];
+
+	/**
+	 * 
+	 * @param port
+	 * @param timeout
+	 */
+	public ServiceLocator(int port, int timeout) {
+		this.port = port;
+		this.timeout = timeout;
+		
+	}
+
+	/**
+	 * Client locating server and sending package.
+	 * 
+	 * @return InetAddress of Service
+	 * @throws UnknownHostException
+	 *             the Service could not be found.
+	 */
+	public InetAddress locate() throws UnknownHostException {
+		try {
+			System.out.println("Client: Locate with WHO!");
+
+			 // Create a packet to the broadcast Address 255.255.255.255 with the content "WHO".
+			byte[] ba = "WHO".getBytes();
+			DatagramSocket socket = new DatagramSocket();
+			byte adr = (byte) 255;
+			byte[] address = { adr, adr, adr, adr };
+			InetAddress internetAdress = InetAddress.getByAddress(address);
+			DatagramPacket packet = new DatagramPacket(ba, ba.length, internetAdress, port);
+			
+			// Send WHO request.
+			socket.send(packet);
+			// Wait for response 5000 milliseconds.
+			socket.setSoTimeout(timeout);
+			socket.receive(packet);
+			//  Return the address.
+			return packet.getAddress();
+		} catch (final IOException e) {
+			// If there is an error throw that the host isn't found.
+			throw new UnknownHostException();
+		}
+	}
+	
+	public String getServiceName(InetAddress internetAdress) throws UnknownHostException {
+		try {
+			System.out.println("Client: find service name with GSN");
+
+			 // Create a packet to a IP-address with the content GSN (Get Service Name)
+			byte[] ba = "GSN".getBytes();
+			DatagramSocket socket = new DatagramSocket();
+			DatagramPacket packet = new DatagramPacket(ba, ba.length, internetAdress, port);
+			DatagramPacket answer = new DatagramPacket(buffer, buffer.length);
+			// Send GSN request.
+			socket.send(packet);
+			// Wait for response 5000 milliseconds.
+			socket.setSoTimeout(timeout);
+			socket.receive(answer);
+			
+			//  Return the name.
+			return new String(answer.getData());
+			
+		} catch (final IOException e) {
+			// If there is an error throw that the host isn't found.
+			throw new UnknownHostException();
+		}
+	}
+
+	
+	
+	
+	
+	
+	public static void main(final String[] args) {
+		ServiceLocator client = new ServiceLocator(12355, 5000);
+		try {
+			InetAddress address = client.locate();
+			System.out.println("Service is using the IP Address : " + address.getHostAddress());
+			
+			String service = client.getServiceName(address).trim();
+			System.out.println("The Name of the service is : " + service);
+			
+			
+		} catch (final UnknownHostException e) {
+			System.out.println("Service cannot be found!");
+		}
+	}
+}
