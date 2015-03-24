@@ -13,9 +13,13 @@ public class ServiceAnnouncer {
 	DatagramSocket socket;
 	DatagramPacket packet;
 	int timeout = 6000;
-	
 	public ServiceAnnouncer(int port) {
 		this.port = port;
+	}
+
+	public static void main(String[] args) {
+		ServiceAnnouncer server = new ServiceAnnouncer(8001);
+		server.startServer();
 	}
 
 	private void startServer() {
@@ -41,10 +45,5 @@ public class ServiceAnnouncer {
 			socket.close();
 		}
 
-	}
-
-	public static void main(String[] args) {
-		ServiceAnnouncer server = new ServiceAnnouncer(8001);
-		server.startServer();
 	}
 }
