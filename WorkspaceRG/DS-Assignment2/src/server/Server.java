@@ -10,6 +10,7 @@ public class Server {
 	static int port;
 	static boolean running = true;
 	static ServerSocket server;
+	static int activeClients = 0; 
 
 	public static void main(String[] args) {
 		port = Protocol.getServerPort();
@@ -25,9 +26,10 @@ public class Server {
 		while (running) {
 			try {
 				new Listener(server.accept()).start();
+				activeClients++;
 			} catch (IOException e) {
 				if (e.getMessage().equals("Socket closed")) {
-					System.out.println("Server shutdown");
+					System.out.println("Server shutdown. " + activeClients + " Clients already active.");
 					running = false;
 				} else {
 					e.printStackTrace();
@@ -66,6 +68,11 @@ public class Server {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public static void decreaseActive(Socket socket){
+		System.out.println("Client" + socket.getRemoteSocketAddress() + " terminated");
+		activeClients--;
 	}
 
 //	private static class CloseListener extends Thread {

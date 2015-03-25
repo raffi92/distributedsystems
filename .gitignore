@@ -5,3 +5,9 @@ Workspace*/DS*/bin/*
 WorkspaceRG/DS*/bin/
 WorkspaceRG/.metadata/
 *.orig
+.metadata/**
+.metadata/
+.metadata
+WorkspaceRG/.metadata
+WorkspaceRG/.metadata/
+WorkspaceRG/.metadata/**
