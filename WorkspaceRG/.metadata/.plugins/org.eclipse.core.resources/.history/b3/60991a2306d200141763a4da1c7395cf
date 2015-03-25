@@ -1,5 +1,0 @@
-package locator;
-
-public class ServiceLocator {
-
-}

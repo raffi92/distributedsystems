@@ -53,7 +53,7 @@ public class Protocol {
 			}
 			if (cache[0] != 0)
 				System.out.println("Result from Server:\n" + in.readInt());
-			else 
+			else
 				System.out.println("Server shutdown");
 			out.close();
 			in.close();
@@ -72,7 +72,7 @@ public class Protocol {
 		int opt1 = 0;
 		int opt2 = 0;
 		int result = 0;
-		Boolean flag = true;
+		Boolean dataAvailable = true;
 
 		try {
 			DataInputStream in = new DataInputStream(server.getInputStream());
@@ -86,25 +86,30 @@ public class Protocol {
 					out.writeBoolean(tmp);
 					success = tmp;
 				} catch (EOFException e) {
-					System.out.println("Client "
-							+ server.getRemoteSocketAddress() + " terminated");
+					Server.decreaseActive(server);
 					// set flags to terminate client
-					flag = false;
+					dataAvailable = false;
 					success = true;
 				}
 
 			}
-			while (flag) {
+			while (dataAvailable) {
 				if (in.available() > 0) {
 					service = in.readInt();
-					if (service == 0){
-						Server.remoteQuitServer();
+					if (service == 0) {
+						Server.remoteQuitServer(server);
+					} else {
+						opt1 = in.readInt();
+						opt2 = in.readInt();
+						result = getResult(service, opt1, opt2);
+						out.writeInt(result);
+						Server.decreaseActive(server); // if result is printed
+														// to client, the
+														// clients request is
+														// served
 					}
-					opt1 = in.readInt();
-					opt2 = in.readInt();
-					result = getResult(service, opt1, opt2);
-					out.writeInt(result);
-					flag = false;
+					dataAvailable = false;
+
 				}
 			}
 			in.close();
@@ -123,8 +128,6 @@ public class Protocol {
 		return serverport;
 	}
 
-
-	
 	/**
 	 * Check if entered user and master user are the same
 	 */
@@ -203,7 +206,7 @@ public class Protocol {
 				fillCache(4, num1, num2);
 				flag = false;
 				break;
-			case 0: 
+			case 0:
 				fillCache(0, 0, 0);
 				flag = false;
 				break;
