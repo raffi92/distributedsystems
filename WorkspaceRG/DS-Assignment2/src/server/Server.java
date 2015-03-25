@@ -29,7 +29,11 @@ public class Server {
 				activeClients++;
 			} catch (IOException e) {
 				if (e.getMessage().equals("Socket closed")) {
-					System.out.println("Server shutdown. " + activeClients + " Clients already active.");
+					if (activeClients == 1){
+						System.out.println("Server shutdown. " + activeClients + " Client are still active.");	
+					}
+					if (activeClients > 1)
+						System.out.println("Server shutdown. " + activeClients + " Clients are still active.");
 					running = false;
 				} else {
 					e.printStackTrace();
