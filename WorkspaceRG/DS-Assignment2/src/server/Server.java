@@ -20,8 +20,8 @@ public class Server {
 			e1.printStackTrace();
 		}
 
-		System.out.println("Waiting for client\nShutdown with 'quit'");
-		new CloseListener().start();
+		System.out.println("Waiting for client\n");
+		//new CloseListener().start();
 		while (running) {
 			try {
 				new Listener(server.accept()).start();
@@ -36,6 +36,15 @@ public class Server {
 			}
 		}
 
+	}
+	
+	public static void remoteQuitServer() {
+		try {
+			server.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private static class Listener extends Thread {
@@ -59,17 +68,17 @@ public class Server {
 		}
 	}
 
-	private static class CloseListener extends Thread {
-		public void run() {
-			Scanner input = new Scanner(System.in);
-			input.next().equals("quit");
-			try {
-				server.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			input.close();
-		}
-	}
+//	private static class CloseListener extends Thread {
+//		public void run() {
+//			Scanner input = new Scanner(System.in);
+//			input.next().equals("quit");
+//			try {
+//				server.close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			input.close();
+//		}
+//	}
 }
