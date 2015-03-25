@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="17" version="2.0">
+<workbench progressCount="14" version="2.0">
 <workbenchAdvisor/>
 <window height="744" maximized="true" width="1024" x="65" y="24">
 <fastViewData fastViewLocation="1024"/>
@@ -43,9 +43,9 @@
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="test.java" partName="test.java" path="/home/raphael/distributedsystems/WorkspaceRG/DS-Assignment2/src/client/test.java" title="test.java" tooltip="DS-Assignment2/src/client/test.java" workbook="DefaultEditorWorkbook">
-<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DS-Assignment2/src/client/test.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="34" selectionTopPixel="0"/>
+<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="test.java" partName="test.java" path="/home/raphael/distributedsystems/WorkspaceRG/DS-Assignment3/src/announcer/test.java" title="test.java" tooltip="DS-Assignment3/src/announcer/test.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DS-Assignment3/src/announcer/test.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="178" selectionTopPixel="0"/>
 </editor>
 </editors>
 <views>
@@ -56,7 +56,8 @@
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
 <expanded>
-<category IMemento.internal.id="Warnings"/>
+<category IMemento.internal.id="Warnings (5 items)"/>
+<category IMemento.internal.id="Errors"/>
 </expanded>
 <columnWidths org.eclipse.ui.ide.locationField="105" org.eclipse.ui.ide.markerType="519" org.eclipse.ui.ide.pathField="140" org.eclipse.ui.ide.resourceField="105" org.eclipse.ui.ide.severityAndDescriptionField="350"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
@@ -336,75 +337,53 @@
 <workingSets/>
 <navigationHistory>
 <editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/protocol/Protocol.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/server/Server.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/client/Client.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/server/Server.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/protocol/Protocol.java"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment2/src/client/test.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment3/src/announcer/test.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/DS-Assignment3/src/announcer/ServiceAnnouncer.java"/>
 </editors>
-<item historyLabel="Protocol.java" index="0">
-<position info="not_deleted" x="5577" y="0"/>
-</item>
-<item historyLabel="Protocol.java" index="0">
+<item historyLabel="test.java" index="0">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="Protocol.java" index="0">
-<position info="not_deleted" x="552" y="0"/>
+<item historyLabel="test.java" index="0">
+<position/>
 </item>
-<item historyLabel="Server.java" index="1">
+<item historyLabel="test.java" index="0">
+<position info="not_deleted" x="227" y="0"/>
+</item>
+<item historyLabel="ServiceAnnouncer.java" index="1">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="Server.java" index="1">
+<item historyLabel="test.java" index="0">
+<position info="not_deleted" x="244" y="0"/>
+</item>
+<item historyLabel="test.java" index="0">
+<position info="not_deleted" x="242" y="0"/>
+</item>
+<item historyLabel="test.java" index="0">
+<position info="not_deleted" x="178" y="38"/>
+</item>
+<item historyLabel="ServiceAnnouncer.java" index="1">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="Client.java" index="2">
+<item historyLabel="test.java" index="0">
+<position info="not_deleted" x="178" y="38"/>
+</item>
+<item historyLabel="ServiceAnnouncer.java" index="1">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="Client.java" index="2">
+<item historyLabel="test.java" index="0">
 <position info="not_deleted" x="0" y="0"/>
 </item>
-<item historyLabel="Client.java" index="2">
-<position info="not_deleted" x="0" y="0"/>
+<item historyLabel="test.java" index="0">
+<position info="not_deleted" x="468" y="0"/>
 </item>
-<item historyLabel="Server.java" index="3">
-<position info="not_deleted" x="0" y="0"/>
+<item historyLabel="test.java" index="0">
+<position info="not_deleted" x="100" y="0"/>
 </item>
-<item historyLabel="Server.java" index="3">
-<position info="not_deleted" x="0" y="0"/>
+<item historyLabel="test.java" index="0">
+<position info="not_deleted" x="217" y="0"/>
 </item>
-<item historyLabel="Protocol.java" index="4">
-<position info="not_deleted" x="0" y="0"/>
-</item>
-<item historyLabel="Protocol.java" index="4">
-<position info="not_deleted" x="302" y="0"/>
-</item>
-<item historyLabel="Server.java" index="3">
-<position info="not_deleted" x="1349" y="0"/>
-</item>
-<item historyLabel="Client.java" index="2">
-<position info="not_deleted" x="0" y="0"/>
-</item>
-<item historyLabel="Server.java" index="3">
-<position info="not_deleted" x="1349" y="0"/>
-</item>
-<item historyLabel="Client.java" index="2">
-<position info="not_deleted" x="0" y="0"/>
-</item>
-<item historyLabel="Server.java" index="3">
-<position info="not_deleted" x="1349" y="0"/>
-</item>
-<item historyLabel="Client.java" index="2">
-<position info="not_deleted" x="54" y="0"/>
-</item>
-<item historyLabel="test.java" index="5">
-<position info="not_deleted" x="0" y="0"/>
-</item>
-<item historyLabel="test.java" index="5">
-<position info="not_deleted" x="117" y="0"/>
-</item>
-<item active="true" historyLabel="test.java" index="5">
-<position info="not_deleted" x="125" y="0"/>
+<item active="true" historyLabel="test.java" index="0">
+<position info="not_deleted" x="364" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -427,11 +406,26 @@
 </trimLayout>
 </window>
 <mruList>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="test.java" tooltip="DS-Assignment2/src/client/test.java">
-<persistable path="/DS-Assignment2/src/client/test.java"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="test.java" tooltip="DS-Assignment3/src/announcer/test.java">
+<persistable path="/DS-Assignment3/src/announcer/test.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="ServiceAnnouncer.java" tooltip="DS-Assignment3/src/announcer/ServiceAnnouncer.java">
+<persistable path="/DS-Assignment3/src/announcer/ServiceAnnouncer.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="ServiceLocator.java" tooltip="DS-Assignment3/src/locator/ServiceLocator.java">
+<persistable path="/DS-Assignment3/src/locator/ServiceLocator.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="ServiceLocator.java" tooltip="test/src/ex3/ServiceLocator.java">
+<persistable path="/test/src/ex3/ServiceLocator.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="ServiceAnnouncer.java" tooltip="test/src/ex3/ServiceAnnouncer.java">
+<persistable path="/test/src/ex3/ServiceAnnouncer.java"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Client.java" tooltip="DS-Assignment2/src/client/Client.java">
 <persistable path="/DS-Assignment2/src/client/Client.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="test.java" tooltip="DS-Assignment2/src/client/test.java">
+<persistable path="/DS-Assignment2/src/client/test.java"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Server.java" tooltip="DS-Assignment2/src/server/Server.java">
 <persistable path="/DS-Assignment2/src/server/Server.java"/>

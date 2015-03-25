@@ -25,10 +25,10 @@ public class ServiceLocator {
 	public void startClient(InetAddress inet){
 		byte[] data = hello.getBytes();
 		try {
-		packet = new DatagramPacket(data, data.length, inet, port );
+		packet = new DatagramPacket(data, data.length, inet,port);
 		socket = new DatagramSocket();
 		System.out.println("Sending packet with broadcast from client: " + packet.getAddress());
-			socket.send( packet );
+		socket.send( packet );
 		} catch (IOException e) {
 			System.out.println("Something went wrong with the message");
 		}
