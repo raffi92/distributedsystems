@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class Shutdown extends Thread{
 	DatagramSocket socket;
+	Scanner input;
+	Boolean flag = true;
 	
 	public Shutdown (DatagramSocket socket){
 		this.socket = socket;
@@ -17,9 +19,13 @@ public class Shutdown extends Thread{
 	}
 	
 	public void run() {
-		Scanner input = new Scanner(System.in);
-		input.next().equals("quit");
-		ServiceAnnouncer.socket.close();
+		while(flag){
+		input = new Scanner(System.in);
+		if(input.next().equals("quit")){
+			ServiceAnnouncer.socket.close();
+			flag = false;
+		}
+		}
 		input.close();
 	}
 }
