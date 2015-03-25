@@ -11,6 +11,8 @@ WorkspaceRG/.metadata/
 WorkspaceRG/.metadata
 WorkspaceRG/.metadata/
 WorkspaceRG/.metadata/**
+# test if it is necessary to add .project and .classpath to gitignore
+
 #*.pydevproject
 #.metadata
 #.gradle
