@@ -4,6 +4,8 @@ import java.net.*;
 import java.util.Scanner;
 import java.io.*;
 
+import server.Server;
+
 public class Protocol {
 	// static variables remain the same for all clients
 	private static int serverport = 8002;
@@ -49,7 +51,10 @@ public class Protocol {
 			for (int i = 0; i < cache.length; i++) {
 				out.writeInt(cache[i]);
 			}
-			System.out.println("Result from Server:\n" + in.readInt());
+			if (cache[0] != 0)
+				System.out.println("Result from Server:\n" + in.readInt());
+			else 
+				System.out.println("Server shutdown");
 			out.close();
 			in.close();
 			input.close();
@@ -92,6 +97,9 @@ public class Protocol {
 			while (flag) {
 				if (in.available() > 0) {
 					service = in.readInt();
+					if (service == 0){
+						Server.remoteQuitServer();
+					}
 					opt1 = in.readInt();
 					opt2 = in.readInt();
 					result = getResult(service, opt1, opt2);
@@ -151,7 +159,7 @@ public class Protocol {
 		Boolean flag = true;
 		System.out.println("Please choose your service!");
 		System.out
-				.println("1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial");
+				.println("1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n0...Quit server");
 
 		servicenr = input.nextInt();
 		while (flag) {
@@ -193,6 +201,10 @@ public class Protocol {
 				num1 = input.nextInt();
 				num2 = 0;
 				fillCache(4, num1, num2);
+				flag = false;
+				break;
+			case 0: 
+				fillCache(0, 0, 0);
 				flag = false;
 				break;
 			default:

@@ -40,7 +40,7 @@
 		<item value="false" key="create_constructor"/>
 		<item value="false" key="create_main"/>
 		<item value="true" key="create_unimplemented"/>
->>>>>>> 7cc68dda12259a166959b7308b7f2361794da76b
+>>>>>>> d9dfe81eb84a920ccb4058e5a992c4f5d31d4ef9
 	</section>
 	<section name="NewClassWizardPage">
 		<item value="false" key="create_constructor"/>
