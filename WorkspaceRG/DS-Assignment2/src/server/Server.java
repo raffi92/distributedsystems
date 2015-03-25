@@ -39,15 +39,6 @@ public class Server {
 		}
 
 	}
-	
-	public static void remoteQuitServer() {
-		try {
-			server.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	private static class Listener extends Thread {
 		private Socket socket;
@@ -73,6 +64,16 @@ public class Server {
 	public static void decreaseActive(Socket socket){
 		System.out.println("Client" + socket.getRemoteSocketAddress() + " terminated");
 		activeClients--;
+	}
+	
+	public static void remoteQuitServer(Socket socket) {
+		decreaseActive(socket);
+		try {
+			server.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 //	private static class CloseListener extends Thread {

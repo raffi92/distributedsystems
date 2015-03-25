@@ -97,17 +97,19 @@ public class Protocol {
 				if (in.available() > 0) {
 					service = in.readInt();
 					if (service == 0) {
-						Server.remoteQuitServer();
+						Server.remoteQuitServer(server);
 					} else {
 						opt1 = in.readInt();
 						opt2 = in.readInt();
 						result = getResult(service, opt1, opt2);
 						out.writeInt(result);
+						Server.decreaseActive(server); // if result is printed
+														// to client, the
+														// clients request is
+														// served
 					}
 					dataAvailable = false;
-					Server.decreaseActive(server); // if result is printed to
-													// client, the clients
-													// request is served
+
 				}
 			}
 			in.close();
