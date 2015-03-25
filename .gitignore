@@ -1,3 +1,6 @@
 WorkspaceRG/.metadata/*
 Workspace*/DS*/bin/*
 *.class
+*.ini
+WorkspaceRG/DS*/bin/
+WorkspaceRG/.metadata/
