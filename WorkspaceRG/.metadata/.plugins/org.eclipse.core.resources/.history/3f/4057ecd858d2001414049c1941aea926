@@ -1,0 +1,16 @@
+package announcer;
+
+import java.util.Scanner;
+
+public class test {
+
+	public static void main(String[] args){
+        Scanner scan = new Scanner(System.in);
+        float first = scan.nextFloat();
+        float second = scan.nextFloat();
+        float media = (first + second) / 2;
+        System.out.println(media);
+        media = Math.round(media * 100000) / 100000;
+        System.out.println("MEDIA = " + media);
+	}
+}

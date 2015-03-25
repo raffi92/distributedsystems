@@ -4,3 +4,4 @@ Workspace*/DS*/bin/*
 *.ini
 WorkspaceRG/DS*/bin/
 WorkspaceRG/.metadata/
+*.orig

@@ -2,10 +2,14 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="protocol.Protocol"/>
 <fullyQualifiedTypeName name="java.io.OutputStream"/>
-<fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="java.lang.reflect.Array"/>
 <fullyQualifiedTypeName name="java.io.DataInputStream"/>
-<fullyQualifiedTypeName name="java.util.Scanner"/>
 <fullyQualifiedTypeName name="java.io.FileNotFoundException"/>
+<<<<<<< HEAD
 <fullyQualifiedTypeName name="server.Server"/>
+=======
+<fullyQualifiedTypeName name="java.net.Socket"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="java.util.Scanner"/>
+>>>>>>> 68cfb1e809d688cb00c56f3b123759ab63ce1fcf
 </qualifiedTypeNameHistroy>

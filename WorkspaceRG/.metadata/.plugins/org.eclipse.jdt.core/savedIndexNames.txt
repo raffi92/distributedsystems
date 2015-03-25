@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 INDEX VERSION 1.127+/home/csl/Projects/distributedsystems/WorkspaceRG/.metadata/.plugins/org.eclipse.jdt.core
 3345481538.index
 1257844331.index
@@ -14,3 +15,20 @@ INDEX VERSION 1.127+/home/csl/Projects/distributedsystems/WorkspaceRG/.metadata/
 3390580945.index
 73425397.index
 2200071285.index
+=======
+INDEX VERSION 1.126+/home/raphael/distributedsystems/WorkspaceRG/.metadata/.plugins/org.eclipse.jdt.core
+1022003584.index
+3390580945.index
+1989682271.index
+664202523.index
+4267884898.index
+1198206356.index
+3172931655.index
+2409005450.index
+1714592054.index
+1514218975.index
+3829351191.index
+1928036885.index
+1791498496.index
+1737441395.index
+>>>>>>> 68cfb1e809d688cb00c56f3b123759ab63ce1fcf
