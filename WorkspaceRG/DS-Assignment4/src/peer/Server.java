@@ -3,43 +3,54 @@ package peer;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
-/*
- * This class act like a server and listens to new incomming nodes.
- */
 import java.net.Socket;
-import java.util.Scanner;
+import java.net.UnknownHostException;
 
 import networkManagement.Management;
 
+/*
+ * This class act like a server and listens to new incomming nodes.
+ */
 public class Server implements Runnable {
-	private ServerSocket socket;
+	private ServerSocket serversock;
 	private Management manager;
-	private int port = 8005;
+	private int port = 0; // 0 means any free port
 	private boolean running = true;
-	
-	public Server(Scanner input, Management manager){
-		System.out.println("Enter port on which server should listen");
-		port = input.nextInt();
-		this.manager = manager;
-	}
 
-	@Override
-	public void run() {
+	public Server(Management manager) {
+		this.manager = manager;
+		// create new server socket
 		try {
-			socket = new ServerSocket(port);
+			serversock = new ServerSocket(port);
+			manager.setListener(serversock);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Peer server run on port " + port);
 
+		// set local peer address of server that client can inform other peers
+		manager.setLocalPeerAddress(serversock);
+	}
+
+	@Override
+	public void run() {
+		// info server ip and port
+		try {
+			System.out.println("Peer listener run on port " + InetAddress.getLocalHost().getHostAddress() + ":" + serversock.getLocalPort());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		// server loop waits for clients
 		while (running) {
 			try {
-				new Listener(socket.accept()).start();
+				new Listener(serversock.accept()).start();
 			} catch (IOException e) {
 				if (e.getMessage().equals("Socket is closed") || e.getMessage().equals("Socket closed")) {
-					//System.out.println("Server closed");
+					// System.out.println("Server closed");
 				} else {
 					e.printStackTrace();
 				}
@@ -56,16 +67,13 @@ public class Server implements Runnable {
 		}
 
 		public void run() {
-			System.out.println("Just connected to client"
-					+ socket.getRemoteSocketAddress());
+			System.out.println("new peer " + socket.getRemoteSocketAddress());
+
 			try {
 				DataInputStream in = new DataInputStream(socket.getInputStream());
-				DataOutputStream out = new DataOutputStream(
-						socket.getOutputStream());
+				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 				String newNode = in.readUTF();
 				manager.addEntry(newNode);
-				System.out.println(newNode);
-				
 				out.writeBoolean(true);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -80,15 +88,10 @@ public class Server implements Runnable {
 		}
 	}
 
+	// quit server
 	public void close() {
 		running = false;
-		try {
-			socket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("Server closed");
+		manager.disconnection();
 	}
 
 }

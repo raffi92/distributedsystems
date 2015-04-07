@@ -1,9 +1,8 @@
 package peer;
 
-import java.net.InetAddress;
 import java.util.Scanner;
-
 import networkManagement.Management;
+
 /*
  * Each peer consists of a networkManagement instance which is containing one table of nodes
  * in the unstructured peer to peer network
@@ -20,51 +19,72 @@ public class Peer {
 	private Scanner inputScanner;
 	Thread serverThread;
 	Thread clientThread;
-	// shared variables between server and client of one peer
-	// TODO
 	
-	public Peer (){
-		// user enter ip and port of one peer in the network
-		InetAddress initIP = null;
+	// init peer
+	public Peer() {
+		String initIP = "localhost";
 		int initPort = 0;
-		System.out.println("Enter port to connect to other peer or 0 to create new network");
+		// user enter ip and port of one peer in the network
+		System.out.println("Enter IP or 0 to create new network");
 		inputScanner = new Scanner(System.in);
-		initPort = inputScanner.nextInt();
-		server = new Server(inputScanner, manager);
-		new CloseListener(server).start();
-		client = new Client(initIP, initPort, manager);
+		// TODO fehlerbehandlung bei falschem input
+		initIP = inputScanner.nextLine();
+		if (initIP.equals("0")) // new network
+			initPort = 0;
+		else if (initIP.split(":")[0].length() > 0 && initIP.split(":")[1].length() > 0){
+			// <ip>:<port> format
+			initPort = Integer.parseInt(initIP.split(":")[1]);
+			initIP = initIP.split(":")[0];
+		}
+		else {	// port separately entered
+			System.out.println("Enter port");
+			initPort = inputScanner.nextInt();
+		}
+		server = new Server(manager); // listener
+		new CloseListener(server).start(); // close listener
+		client = new Client(initIP, initPort, manager); // client
 	}
-	
-	public void start(){
+	/**
+	 * create an start threads of listener and client
+	 */
+	public void start() {
 		Thread serverThread = new Thread(server);
 		Thread clientThread = new Thread(client);
 		clientThread.run();
 		serverThread.run();
-		
+
 		System.out.println("Peer shutdown");
 	}
+
 	
-	
-	public static void main(String[] args) {
-		System.out.println("Peer started");
-		Peer p = new Peer();
-		p.start();
-	}
-	
+	/**
+	 * listen if peer should be exited
+	 */
 	private class CloseListener extends Thread {
 		private Server server;
 		private boolean closed = false;
-		public CloseListener(Server server){
+
+		public CloseListener(Server server) {
 			this.server = server;
 		}
+
 		public void run() {
-			while (!closed){
-				if (inputScanner.next().equals("quit")){
+			while (!closed) {
+				if (inputScanner.next().equals("quit")) {
 					server.close();
 					inputScanner.close();
 					closed = true;
 				}
 			}
 		}
+	}
+	/**
+	 * create peer
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		System.out.println("Peer started");
+		Peer p = new Peer();
+		p.start();
 	}
 }
