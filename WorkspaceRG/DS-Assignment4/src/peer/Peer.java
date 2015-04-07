@@ -17,6 +17,7 @@ public class Peer {
 	private Management manager = new Management();
 	private Server server;
 	private Client client;
+	private Scanner inputScanner;
 	Thread serverThread;
 	Thread clientThread;
 	// shared variables between server and client of one peer
@@ -27,12 +28,11 @@ public class Peer {
 		InetAddress initIP = null;
 		int initPort = 0;
 		System.out.println("Enter port to connect to other peer or 0 to create new network");
-		Scanner input = new Scanner(System.in);
-		initPort = input.nextInt();
-		server = new Server();
+		inputScanner = new Scanner(System.in);
+		initPort = inputScanner.nextInt();
+		server = new Server(inputScanner, manager);
 		new CloseListener(server).start();
-		client = new Client(initIP, initPort);
-		
+		client = new Client(initIP, initPort, manager);
 	}
 	
 	public void start(){
@@ -41,12 +41,7 @@ public class Peer {
 		clientThread.run();
 		serverThread.run();
 		
-		
-		// try connect to given peer (client) 
-		// TODO
-		
-		// shutdown service for peer
-		// TODO	
+		System.out.println("Peer shutdown");
 	}
 	
 	
@@ -63,11 +58,10 @@ public class Peer {
 			this.server = server;
 		}
 		public void run() {
-			Scanner input = new Scanner(System.in);
 			while (!closed){
-				if (input.next().equals("quit")){
+				if (inputScanner.next().equals("quit")){
 					server.close();
-					input.close();
+					inputScanner.close();
 					closed = true;
 				}
 			}

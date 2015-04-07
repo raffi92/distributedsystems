@@ -1,6 +1,5 @@
 package networkManagement;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 
 /* 
@@ -30,8 +29,8 @@ public class Management {
 		
 	}
 	
-	public void addEntry(InetAddress ip, int port){
-		NodeEntry newNode = new NodeEntry(ip, port);
+	public void addEntry(String ipPort){
+		NodeEntry newNode = new NodeEntry(ipPort);
 		table.add(newNode);
 	}
 }
