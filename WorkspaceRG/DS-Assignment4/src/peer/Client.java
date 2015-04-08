@@ -8,7 +8,7 @@ public class Client extends Peer implements Runnable{
 		// client send its InetAddress and port to the other peer
 		// TODO InetAddress.getLocalHost()
 	}
-	@Override
+	
 	public void run() {
 		
 	}

@@ -3,12 +3,13 @@ package peer;
 import java.io.IOException;
 import java.net.ServerSocket;
 /*
- * This class act like a server and listens to new incomming nodes.
+ * This class act like a server and listens to new incoming nodes.
  */
 
 public class Server extends Peer implements Runnable{
 	private ServerSocket sockert;
-	@Override
+	
+	
 	public void run() {
 		try {
 			sockert = new ServerSocket();
