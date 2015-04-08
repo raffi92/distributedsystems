@@ -1,6 +1,7 @@
 package peer;
 
 import java.util.Scanner;
+
 import networkManagement.Management;
 
 /*
@@ -8,7 +9,7 @@ import networkManagement.Management;
  * in the unstructured peer to peer network
  * One peer is attached to the network by connecting to some node of the network (constructor).
  * client establish connection to network with the ip address of the peer
- * client send requests to other peers (open which services are provided)
+ * client send requests to other peers 
  * server listen to new connected peer (delegate ip and port to the manager)
  * server response to incoming requests of other peers
  */
@@ -40,8 +41,11 @@ public class Peer {
 			System.out.println("Enter port");
 			initPort = inputScanner.nextInt();
 		}
-		server = new Server(manager); // listener
-		new CloseListener(server).start(); // close listener
+		server = new Server(manager); 			// listener for new peer
+		new CommandListener(server).start(); 	// command listener
+		Thread pushThread = new Thread(new PushingService()); 			// start pushing service
+		pushThread.start();
+		manager.setPushServiceThread(pushThread);
 		client = new Client(initIP, initPort, manager); // client
 	}
 	/**
@@ -58,25 +62,54 @@ public class Peer {
 
 	
 	/**
-	 * listen if peer should be exited
+	 * listen to the commands from the user
 	 */
-	private class CloseListener extends Thread {
+	private class CommandListener extends Thread {
 		private Server server;
 		private boolean closed = false;
 
-		public CloseListener(Server server) {
+		public CommandListener(Server server) {
 			this.server = server;
 		}
 
 		public void run() {
 			while (!closed) {
-				if (inputScanner.next().equals("quit")) {
+				// read command
+				String command = inputScanner.next();
+				// quit peer -> disconnect and stop listener 
+				if (command.equals("quit")) {
 					server.close();
 					inputScanner.close();
 					closed = true;
 				}
+				// print table of peers
+				if (command.equals("table")) {
+					manager.getCurrentState();
+				}
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 * share own nodes with arbitrary peer in the network in a periodically fashion
+	 */
+	private class PushingService implements Runnable {
+		private boolean pushing = true;
+		@Override
+		public void run() {
+			while (manager.isRunning()){
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					//System.out.println("push service closed");
+					pushing = false;
+				}
+				if (pushing)
+					manager.shareNodes();
+			}
+		}
+		
 	}
 	/**
 	 * create peer
