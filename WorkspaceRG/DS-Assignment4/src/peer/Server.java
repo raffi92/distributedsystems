@@ -67,8 +67,6 @@ public class Server implements Runnable {
 		}
 
 		public void run() {
-			System.out.println("new peer " + socket.getRemoteSocketAddress());
-
 			try {
 				DataInputStream in = new DataInputStream(socket.getInputStream());
 				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -76,7 +74,6 @@ public class Server implements Runnable {
 				manager.addEntry(newNode);
 				out.writeBoolean(true);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			try {

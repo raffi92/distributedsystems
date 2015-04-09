@@ -3,7 +3,7 @@ package networkManagement;
 /*
  * This class describes how a node entry in the remote node table look like
  */
-public class NodeEntry {
+public class NodeEntry{
 	private String ip;
 	private int port;
 
@@ -20,5 +20,4 @@ public class NodeEntry {
 	public int getPort() {
 		return this.port;
 	}
-
 }

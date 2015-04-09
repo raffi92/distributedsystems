@@ -26,7 +26,10 @@ public class Client implements Runnable {
 		// initport zero denotes new network
 		if (initPort != 0) {
 			try {
+				// create socket
 				client = manager.connecting(initPort, initIp);
+				// add init node to table
+				manager.addEntry(initIp + ":" + initPort);
 				// create input and output streams
 				OutputStream sendToServer = client.getOutputStream();
 				DataOutputStream out = new DataOutputStream(sendToServer);
@@ -46,6 +49,7 @@ public class Client implements Runnable {
 		} else {
 			System.out.println("new network created");
 		}
+		
 	}
 
 }
