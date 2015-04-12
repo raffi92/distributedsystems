@@ -21,7 +21,7 @@ public class Server implements Runnable {
 	private int port = 0; // 0 means any free port
 	private boolean running = true;
 
-	public Server(Management manager) {
+	public Server(Management manager, String name) {
 		this.manager = manager;
 		// create new server socket
 		try {
@@ -32,7 +32,7 @@ public class Server implements Runnable {
 		}
 
 		// set local peer address of server that client can inform other peers
-		manager.setLocalPeerAddress(serversock);
+		manager.setLocalPeerAddress(serversock, name);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class Server implements Runnable {
 					JSONArray tableArray = (JSONArray) message.get("table");
 					for (int i = 0;i<tableArray.length();i++){
 						JSONObject tmp = (JSONObject) tableArray.get(i);
-						NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"));
+						NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"), tmp.getString("name"));
 						manager.addEntry(tmp2);
 					}
 					// delete double entries and self reference
@@ -87,6 +87,7 @@ public class Server implements Runnable {
 					JSONObject respond = manager.buildJsonObjectOfTable();
 					out.writeUTF(respond.toString());
 				}
+				// forward one-to-all message
 				if (message.has("all")){
 					manager.forwardOneToAll(message);
 				}

@@ -16,7 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /* 
- * This Class should contain all utility functions like
+ * This Class contain all utility functions like
  * connecting to network
  * disconnection from network
  * method obtaining the local peer address
@@ -56,9 +56,9 @@ public class Management {
 		}
 	}
 
-	public void setLocalPeerAddress(ServerSocket sock) {
+	public void setLocalPeerAddress(ServerSocket sock, String name) {
 		try {
-			selfNode = new NodeEntry(InetAddress.getLocalHost().getHostAddress() + ":" + sock.getLocalPort());
+			selfNode = new NodeEntry(InetAddress.getLocalHost().getHostAddress() + ":" + sock.getLocalPort(), name);
 		} catch (UnknownHostException e2) {
 			e2.printStackTrace();
 		}
@@ -93,7 +93,7 @@ public class Management {
 			JSONArray tableArray = (JSONArray) answer.get("table");
 			for (int i = 0; i < tableArray.length(); i++) {
 				JSONObject tmp = (JSONObject) tableArray.get(i);
-				NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"));
+				NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"), tmp.getString("name"));
 				addEntry(tmp2);
 			}
 			deleteInvalid();
@@ -159,7 +159,7 @@ public class Management {
 			JSONArray informed = message.getJSONArray("informed");
 			for (int i = 0; i < informed.length(); i++) {
 				JSONObject tmp = (JSONObject) informed.get(i);
-				NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"));
+				NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"), tmp.getString("name"));
 				informedNodes.add(tmp2);
 			}
 		} catch (JSONException e) {
@@ -181,8 +181,7 @@ public class Management {
 		} catch (JSONException e2) {
 			e2.printStackTrace();
 		}
-		int wall = Math.max(table.size()*2, informedNodes.size()*5);
-		wall = 1000;
+		int wall = Math.max(table.size()*2, informedNodes.size()*2);
 		if (informedNodes.contains(getSelfNode()) && prevHops < wall) { // only forwarding
 			// increment hops
 			try {
@@ -315,7 +314,7 @@ public class Management {
 
 	public void printTable() {
 		for (int i = 0; i < table.size(); i++) {
-			System.out.println((i + 1) + ")" + table.get(i).getIP() + ":" + table.get(i).getPort());
+			System.out.println((i + 1) + ")" + table.get(i).getIP() + ":" + table.get(i).getPort() + "\t" + table.get(i).getName());
 		}
 		if (table.size() == 0) {
 			System.out.println("no entries available");
@@ -324,7 +323,7 @@ public class Management {
 
 	public void printTable(ArrayList<NodeEntry> table) {
 		for (int i = 0; i < table.size(); i++) {
-			System.out.println((i + 1) + ")" + table.get(i).getIP() + ":" + table.get(i).getPort());
+			System.out.println((i + 1) + ")" + table.get(i).getIP() + ":" + table.get(i).getPort() + "\t" + table.get(i).getName());
 		}
 		if (table.size() == 0) {
 			System.out.println("no entries available");

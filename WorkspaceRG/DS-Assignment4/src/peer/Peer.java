@@ -12,6 +12,14 @@ import networkManagement.Management;
  * client send requests to other peers 
  * server listen to new connected peer (delegate ip and port to the manager)
  * server response to incoming requests of other peers
+ * TODO anzahl der nodes die im table gehalten werden??? derzeit fixiert mit 5. Angabe nochmal nachlesen
+ * TODO exercise g) und h) -> contact one peer 
+ * TODO fehlerbehandlung bei falschen eingaben vom user
+ * TODO fehlerbehandlung bei peer die bereits offline sind. bei tabellenaustausch bereits implementiert, aber bei one to all message fehlt das noch
+ * TODO disconnect methode in der management klasse überdenken. soll diese methode für das disconnet vom einem socket sein oder für das disconnet des peer vom ganzen netzwerk. 
+ * socket.close kann oft ersetzt werden durch diese methode.
+ * TODO jsonArray parse entries and add to arraylist - wird oft benötigt -> eigenen methode "public Arraylist parseJsonArray(JsonArray t, ArrayList table)" in Management klasse
+ * 
  */
 public class Peer {
 	private Management manager = new Management();
@@ -40,7 +48,9 @@ public class Peer {
 			System.out.println("Enter port");
 			initPort = inputScanner.nextInt();
 		}
-		server = new Server(manager); // listener for new peer
+		System.out.println("Enter name of peer:");
+		String name = inputScanner.nextLine();
+		server = new Server(manager, name); // listener for new peer
 		new CommandListener(server).start(); // command listener
 		Thread pushThread = new Thread(new PushingService()); // start pushing
 																// service
@@ -68,7 +78,6 @@ public class Peer {
 	 * table - print table of peer 
 	 * all - send a one-to-all message 
 	 * send - send a message to other peer TODO
-	 * fib - send a number to peer and other peer should calc fib
 	 */
 	private class CommandListener extends Thread {
 		private Server server;
@@ -81,7 +90,7 @@ public class Peer {
 		public void run() {
 			while (!closed) {
 				// read command
-				String command = inputScanner.next();
+				String command = inputScanner.nextLine();
 				// quit peer -> disconnect and stop listener
 				if (command.equals("quit")) {
 					server.close();
@@ -94,12 +103,12 @@ public class Peer {
 				}
 				// print possible commands
 				if (command.equals("help")) {
-					System.out.println("Commands:\nquit - exit peer\ntable - list node table of peer\nall - send a one to all message\nsend - send a message to one peer\nfib - other peer should calc fib");
+					System.out.println("Commands:\nquit - exit peer\ntable - list node table of peer\nall - send a one to all message\nsend - send a message to one peer\n");
 				}
 				// one to all message
 				if (command.equals("all")) {
 					System.out.println("Enter the message:");
-					String info = inputScanner.next();
+					String info = inputScanner.nextLine();
 					manager.oneToAll(info);
 				}
 			}
