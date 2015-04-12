@@ -1,5 +1,6 @@
 package networkManagement;
 
+
 /*
  * This class describes how a node entry in the remote node table look like
  */
@@ -12,6 +13,11 @@ public class NodeEntry{
 		this.ip = ipPort.split(":")[0];
 		this.port = Integer.parseInt(ipPort.split(":")[1]);
 	}
+	
+	public NodeEntry(String ip, int port){
+		this.ip = ip;
+		this.port = port;
+	}
 
 	public String getIP() {
 		return this.ip;
@@ -19,5 +25,15 @@ public class NodeEntry{
 
 	public int getPort() {
 		return this.port;
+	}
+	
+	@Override
+	public boolean equals(Object v) {
+		boolean retVal = false;
+        if (v instanceof NodeEntry){
+        	NodeEntry ptr = (NodeEntry) v;
+        	retVal = ptr.getIP().equals(this.getIP()) && ptr.getPort() == this.getPort();
+        }
+        return retVal;
 	}
 }
