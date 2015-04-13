@@ -96,7 +96,7 @@ public class Peer {
 	 */
 	private class PushingService implements Runnable {
 		private boolean pushing = true;
-		@Override
+
 		public void run() {
 			while (manager.isRunning()){
 				try {
