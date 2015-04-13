@@ -8,10 +8,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import networkManagement.Management;
-import networkManagement.NodeEntry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /*
  * This class act like a server and listens to new incomming nodes.
  */
@@ -59,6 +59,12 @@ public class Server implements Runnable {
 
 	}
 
+	// quit server
+	public void close() {
+		running = false;
+		manager.quit();
+	}
+
 	private class Listener extends Thread {
 		private Socket socket;
 
@@ -72,15 +78,12 @@ public class Server implements Runnable {
 				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 				JSONObject message = null;
 				message = new JSONObject(in.readUTF());
-								
+
 				// add entries from other node
-				if (message.has("table")){
+				if (message.has("table")) {
 					JSONArray tableArray = (JSONArray) message.get("table");
-					for (int i = 0;i<tableArray.length();i++){
-						JSONObject tmp = (JSONObject) tableArray.get(i);
-						NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"), tmp.getString("name"));
-						manager.addEntry(tmp2);
-					}
+					// parse and add entries to own table
+					manager.parseJsonArray(tableArray);
 					// delete double entries and self reference
 					manager.deleteInvalid();
 					// respond with own table
@@ -88,7 +91,7 @@ public class Server implements Runnable {
 					out.writeUTF(respond.toString());
 				}
 				// forward one-to-all message
-				if (message.has("all")){
+				if (message.has("all")) {
 					manager.forwardOneToAll(message);
 				}
 			} catch (IOException e1) {
@@ -96,18 +99,7 @@ public class Server implements Runnable {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			try {
-				socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			manager.disconnecting(socket);
 		}
 	}
-
-	// quit server
-	public void close() {
-		running = false;
-		manager.disconnection();
-	}
-
 }

@@ -16,9 +16,6 @@ import networkManagement.Management;
  * TODO exercise g) und h) -> contact one peer 
  * TODO fehlerbehandlung bei falschen eingaben vom user
  * TODO fehlerbehandlung bei peer die bereits offline sind. bei tabellenaustausch bereits implementiert, aber bei one to all message fehlt das noch
- * TODO disconnect methode in der management klasse überdenken. soll diese methode für das disconnet vom einem socket sein oder für das disconnet des peer vom ganzen netzwerk. 
- * socket.close kann oft ersetzt werden durch diese methode.
- * TODO jsonArray parse entries and add to arraylist - wird oft benötigt -> eigenen methode "public Arraylist parseJsonArray(JsonArray t, ArrayList table)" in Management klasse
  * 
  */
 public class Peer {
@@ -129,7 +126,6 @@ public class Peer {
 				try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
-					// System.out.println("push service closed");
 					pushing = false;
 				}
 				if (pushing){
