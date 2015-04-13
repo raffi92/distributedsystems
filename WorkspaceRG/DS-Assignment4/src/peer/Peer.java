@@ -12,6 +12,14 @@ import networkManagement.Management;
  * client send requests to other peers 
  * server listen to new connected peer (delegate ip and port to the manager)
  * server response to incoming requests of other peers
+ * TODO anzahl der nodes die im table gehalten werden??? derzeit fixiert mit 5. Angabe nochmal nachlesen
+ * TODO exercise g) und h) -> contact one peer 
+ * TODO fehlerbehandlung bei falschen eingaben vom user
+ * TODO fehlerbehandlung bei peer die bereits offline sind. bei tabellenaustausch bereits implementiert, aber bei one to all message fehlt das noch
+ * TODO disconnect methode in der management klasse überdenken. soll diese methode für das disconnet vom einem socket sein oder für das disconnet des peer vom ganzen netzwerk. 
+ * socket.close kann oft ersetzt werden durch diese methode.
+ * TODO jsonArray parse entries and add to arraylist - wird oft benötigt -> eigenen methode "public Arraylist parseJsonArray(JsonArray t, ArrayList table)" in Management klasse
+ * 
  */
 public class Peer {
 	private Management manager = new Management();
@@ -96,7 +104,7 @@ public class Peer {
 	 */
 	private class PushingService implements Runnable {
 		private boolean pushing = true;
-
+		@Override
 		public void run() {
 			while (manager.isRunning()){
 				try {

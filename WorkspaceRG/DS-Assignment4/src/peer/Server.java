@@ -7,9 +7,11 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
 import networkManagement.Management;
-
+import networkManagement.NodeEntry;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 /*
  * This class act like a server and listens to new incomming nodes.
  */
@@ -19,19 +21,18 @@ public class Server implements Runnable {
 	private int port = 0; // 0 means any free port
 	private boolean running = true;
 
-	public Server(Management manager) {
+	public Server(Management manager, String name) {
 		this.manager = manager;
 		// create new server socket
 		try {
 			serversock = new ServerSocket(port);
 			manager.setListener(serversock);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		// set local peer address of server that client can inform other peers
-		manager.setLocalPeerAddress(serversock);
+		manager.setLocalPeerAddress(serversock, name);
 	}
 
 	
@@ -40,7 +41,6 @@ public class Server implements Runnable {
 		try {
 			System.out.println("Peer listener run on port " + InetAddress.getLocalHost().getHostAddress() + ":" + serversock.getLocalPort());
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -70,16 +70,35 @@ public class Server implements Runnable {
 			try {
 				DataInputStream in = new DataInputStream(socket.getInputStream());
 				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-				String newNode = in.readUTF();
-				manager.addEntry(newNode);
-				out.writeBoolean(true);
+				JSONObject message = null;
+				message = new JSONObject(in.readUTF());
+								
+				// add entries from other node
+				if (message.has("table")){
+					JSONArray tableArray = (JSONArray) message.get("table");
+					for (int i = 0;i<tableArray.length();i++){
+						JSONObject tmp = (JSONObject) tableArray.get(i);
+						NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"), tmp.getString("name"));
+						manager.addEntry(tmp2);
+					}
+					// delete double entries and self reference
+					manager.deleteInvalid();
+					// respond with own table
+					JSONObject respond = manager.buildJsonObjectOfTable();
+					out.writeUTF(respond.toString());
+				}
+				// forward one-to-all message
+				if (message.has("all")){
+					manager.forwardOneToAll(message);
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
 			try {
 				socket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
