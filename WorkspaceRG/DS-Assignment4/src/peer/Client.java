@@ -53,6 +53,8 @@ public class Client implements Runnable {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			// disconnect
+			manager.disconnecting(client);
 		} else {
 			System.out.println("new network created");
 		}

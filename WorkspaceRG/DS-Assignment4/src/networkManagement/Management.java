@@ -37,18 +37,24 @@ public class Management {
 		} catch (IOException e) {
 			if (e.getMessage().equals("Connection refused")) {
 				removeEntry(ip, port);
-				shareNodes();
+				return null;
 			} else {
 				e.printStackTrace();
 			}
 		}
 		return client;
 	}
-
-	// TODO eventuell unterscheidung zwischen quit und disconnect???
-	public void disconnection() {
+	// disconnet socket
+	public void disconnecting(Socket socket){
 		try {
-			// client.close(); // not neccessary
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	// quit peer
+	public void quit() {
+		try {
 			listener.close();
 			pushService.interrupt();
 		} catch (IOException e) {
@@ -82,6 +88,13 @@ public class Management {
 		}
 		// establish connection to this node
 		Socket sharingSocket = connecting(selected.getPort(), selected.getIP());
+		while (sharingSocket == null){
+			selected = randomNode();
+			if (selected == null) {
+				return;
+			}
+			sharingSocket = connecting(selected.getPort(), selected.getIP());
+		}
 		// create streams
 		try {
 			DataOutputStream out = new DataOutputStream(sharingSocket.getOutputStream());
@@ -91,11 +104,7 @@ public class Management {
 			out.writeUTF(jsonTable.toString());
 			JSONObject answer = new JSONObject(in.readUTF());
 			JSONArray tableArray = (JSONArray) answer.get("table");
-			for (int i = 0; i < tableArray.length(); i++) {
-				JSONObject tmp = (JSONObject) tableArray.get(i);
-				NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"), tmp.getString("name"));
-				addEntry(tmp2);
-			}
+			parseJsonArray(tableArray);
 			deleteInvalid();
 			System.out.print(".");
 		} catch (IOException e) {
@@ -105,11 +114,7 @@ public class Management {
 			e.printStackTrace();
 		}
 		// close
-		try {
-			sharingSocket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		disconnecting(sharingSocket);
 	}
 
 	/**
@@ -141,11 +146,7 @@ public class Management {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		try {
-			infoSocket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		disconnecting(infoSocket);
 	}
 
 	// parse table of nodes that know the info
@@ -157,11 +158,7 @@ public class Management {
 		ArrayList<NodeEntry> informedNodes = new ArrayList<NodeEntry>();
 		try {
 			JSONArray informed = message.getJSONArray("informed");
-			for (int i = 0; i < informed.length(); i++) {
-				JSONObject tmp = (JSONObject) informed.get(i);
-				NodeEntry tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"), tmp.getString("name"));
-				informedNodes.add(tmp2);
-			}
+			informedNodes = parseJsonArray(informed, informedNodes);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -181,6 +178,7 @@ public class Management {
 		} catch (JSONException e2) {
 			e2.printStackTrace();
 		}
+		// define some maximum number of hops without changes of the informed nodes table
 		int wall = Math.max(table.size()*2, informedNodes.size()*2);
 		if (informedNodes.contains(getSelfNode()) && prevHops < wall) { // only forwarding
 			// increment hops
@@ -248,11 +246,7 @@ public class Management {
 				} else
 					e.printStackTrace();
 			}
-			try {
-				forwardSocket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			disconnecting(forwardSocket);
 		}
 
 	}
@@ -265,7 +259,7 @@ public class Management {
 	public void addEntry(NodeEntry ipPort) {
 		table.add(ipPort);
 	}
-
+	// delete double and self references and reduce size of table
 	public void deleteInvalid() {
 		// delete invalid nodes
 		deleteSelfRef();
@@ -307,11 +301,11 @@ public class Management {
 	public void setPushServiceThread(Thread push) {
 		pushService = push;
 	}
-
+	// get self-reference
 	public NodeEntry getSelfNode() {
 		return selfNode;
 	}
-
+	// print own table
 	public void printTable() {
 		for (int i = 0; i < table.size(); i++) {
 			System.out.println((i + 1) + ")" + table.get(i).getIP() + ":" + table.get(i).getPort() + "\t" + table.get(i).getName());
@@ -320,7 +314,7 @@ public class Management {
 			System.out.println("no entries available");
 		}
 	}
-
+	// print given table
 	public void printTable(ArrayList<NodeEntry> table) {
 		for (int i = 0; i < table.size(); i++) {
 			System.out.println((i + 1) + ")" + table.get(i).getIP() + ":" + table.get(i).getPort() + "\t" + table.get(i).getName());
@@ -329,11 +323,11 @@ public class Management {
 			System.out.println("no entries available");
 		}
 	}
-
+	// check activity
 	public boolean isRunning() {
 		return !listener.isClosed();
 	}
-
+	// select random node of own table
 	private NodeEntry randomNode() {
 		int range = table.size();
 		if (range == 0)
@@ -343,7 +337,7 @@ public class Management {
 			return table.get(randIndex);
 		}
 	}
-
+	// select random node of given table
 	private NodeEntry randomNode(ArrayList<NodeEntry> table) {
 		int range = table.size();
 		if (range == 0)
@@ -353,7 +347,7 @@ public class Management {
 			return table.get(randIndex);
 		}
 	}
-
+	// build json object of own node table
 	public JSONObject buildJsonObjectOfTable() {
 		JSONObject jsonTable = new JSONObject();
 		@SuppressWarnings("unchecked")
@@ -367,7 +361,7 @@ public class Management {
 		}
 		return jsonTable;
 	}
-
+	// build json object of node table given by the parameter
 	public JSONObject buildJsonObjectOfTable(ArrayList<NodeEntry> table) {
 		JSONObject jsonTable = new JSONObject();
 		@SuppressWarnings("unchecked")
@@ -403,9 +397,39 @@ public class Management {
 			}
 		}
 	}
-
+	// get own table
 	public ArrayList<NodeEntry> getTable() {
 		return table;
+	}
+	
+	public void parseJsonArray(JSONArray input){
+		// parse each element
+		for (int i = 0; i < input.length(); i++) {
+			JSONObject tmp1 = null;
+			NodeEntry tmp2 = null;
+			try {
+				tmp1 = (JSONObject) input.get(i);
+				tmp2 = new NodeEntry(tmp1.getString("IP"), tmp1.getInt("port"), tmp1.getString("name"));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			addEntry(tmp2);
+		}
+	}
+	
+	public ArrayList<NodeEntry> parseJsonArray(JSONArray input, ArrayList<NodeEntry> output){
+		for (int i = 0; i < input.length(); i++) {
+			JSONObject tmp;
+			NodeEntry tmp2 = null;
+			try {
+				tmp = (JSONObject) input.get(i);
+				tmp2 = new NodeEntry(tmp.getString("IP"), tmp.getInt("port"), tmp.getString("name"));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			output.add(tmp2);
+		}
+		return output;
 	}
 
 }
