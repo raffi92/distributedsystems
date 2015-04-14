@@ -94,6 +94,10 @@ public class Server implements Runnable {
 				if (message.has("all")) {
 					manager.forwardOneToAll(message);
 				}
+				// forward one-to-one message
+				if (message.has("OneToOne")) {
+					manager.forwardOneToOne(message);
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			} catch (JSONException e) {
