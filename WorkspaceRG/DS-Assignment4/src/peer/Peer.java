@@ -49,7 +49,9 @@ public class Peer {
 			System.out.println("Enter port");
 			initPort = inputScanner.nextInt();
 		}
-		server = new Server(manager); 			// listener for new peer
+		System.out.println("Enter name of peer:");
+		String name = inputScanner.nextLine();
+		server = new Server(manager, name); // listener for new peer
 		new CommandListener(server).start(); 	// command listener
 		Thread pushThread = new Thread(new PushingService()); 			// start pushing service
 		pushThread.start();
