@@ -152,7 +152,7 @@ public class Management {
 	// parse table of nodes that know the info
 	// send info to nodes that don't know the info and add this nodes
 	// five times no new nodes to the table of known nodes -> finish
-	// TODO catch exception if node already exited -> select new
+	// TODO if node already exited -> select new (connecting until not null)
 	public void forwardOneToAll(JSONObject message) {
 		// get already informed nodes
 		ArrayList<NodeEntry> informedNodes = new ArrayList<NodeEntry>();
@@ -248,7 +248,77 @@ public class Management {
 			}
 			disconnecting(forwardSocket);
 		}
-
+	}
+	
+	public void contactPeer(String name, String message){
+		// build json object
+		JSONObject mes = new JSONObject();
+		try {
+			mes.put("OneToOne", message);
+			mes.put("target", name);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		// search for target in own table
+		NodeEntry next = null;
+		if(searchByName(name) != null)
+			next = searchByName(name);
+		else {
+			// select random node
+			next = randomNode();
+		}
+		// no entries in table
+		if (next == null)
+			return;
+		// connect
+		Socket nextSocket = connecting(next.getPort(), next.getIP());
+		// send 
+		try {
+			DataOutputStream out = new DataOutputStream(nextSocket.getOutputStream());
+			out.writeUTF(mes.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// close
+		disconnecting(nextSocket);
+	}
+	
+	public void forwardOneToOne(JSONObject mes){
+		// parse jsonObject
+		String target = null;
+		String text = null;
+		try {
+			target = mes.getString("target");
+			text = mes.getString("OneToOne");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		// check if message is for me
+		if (selfNode.getName().equals(target)){
+			System.out.println(text);
+			return;
+		} 
+		
+		// check if target is in own table
+		NodeEntry next = searchByName(target);
+		// select random node
+		if (next == null){
+			next = randomNode();
+		}
+		
+		// connect and send
+		Socket forward = connecting(next.getPort(), next.getIP());
+		try {
+			DataOutputStream out = new DataOutputStream(forward.getOutputStream());
+			out.writeUTF(mes.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// close
+		disconnecting(forward);
+		
 	}
 
 	/**
@@ -430,6 +500,15 @@ public class Management {
 			output.add(tmp2);
 		}
 		return output;
+	}
+	
+	private NodeEntry searchByName(String target){
+		for (int i = 0; i < table.size(); i++){
+			if (table.get(i).getName().equals(target)){
+				return table.get(i);
+			}
+		}
+		return null;
 	}
 
 }

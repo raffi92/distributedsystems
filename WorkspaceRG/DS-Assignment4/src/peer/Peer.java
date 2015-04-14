@@ -104,9 +104,17 @@ public class Peer {
 				}
 				// one to all message
 				if (command.equals("all")) {
-					System.out.println("Enter the message:");
+					System.out.println("Enter message:");
 					String info = inputScanner.nextLine();
 					manager.oneToAll(info);
+				}
+				// contact one peer
+				if (command.equals("send")){
+					System.out.println("Enter message:");
+					String mes = inputScanner.nextLine();
+					System.out.println("Enter name:");
+					String target = inputScanner.nextLine();
+					manager.contactPeer(target, mes);
 				}
 			}
 		}
