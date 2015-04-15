@@ -12,10 +12,8 @@ import networkManagement.Management;
  * client send requests to other peers 
  * server listen to new connected peer (delegate ip and port to the manager)
  * server response to incoming requests of other peers
- * TODO anzahl der nodes die im table gehalten werden??? derzeit fixiert mit 5. Angabe nochmal nachlesen
- * TODO exercise g) und h) -> contact one peer 
  * TODO fehlerbehandlung bei falschen eingaben vom user
- * TODO fehlerbehandlung bei peer die bereits offline sind. bei tabellenaustausch bereits implementiert, aber bei one to all message fehlt das noch
+ * TODO fehlerbehandlung bei peer die bereits offliner sind. bei tabellenaustausch bereits implementiert, aber bei one to all message fehlt das noch
  * 
  */
 public class Peer {
@@ -31,7 +29,7 @@ public class Peer {
 		String initIP = "localhost";
 		int initPort = 0;
 		// user enter ip and port of one peer in the network
-		System.out.println("Enter IP or 0 to create new network");
+		System.out.println("Enter IP [<ip>:<port>] or 0 to create new network");
 		inputScanner = new Scanner(System.in);
 		// TODO fehlerbehandlung bei falschem input
 		initIP = inputScanner.nextLine();
@@ -41,10 +39,12 @@ public class Peer {
 			// <ip>:<port> format
 			initPort = Integer.parseInt(initIP.split(":")[1]);
 			initIP = initIP.split(":")[0];
-		} else { // port separately entered
+		}
+		else { // port separately entered
 			System.out.println("Enter port");
 			initPort = inputScanner.nextInt();
 		}
+		
 		System.out.println("Enter name of peer:");
 		String name = inputScanner.nextLine();
 		server = new Server(manager, name); // listener for new peer
