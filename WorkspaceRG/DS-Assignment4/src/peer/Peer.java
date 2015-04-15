@@ -37,13 +37,13 @@ public class Peer {
 		initIP = inputScanner.nextLine();
 		if (initIP.equals("0")) // new network
 			initPort = 0;
-		else if (initIP.split(":")[0].length() > 0 && initIP.split(":")[1].length() > 0){
+		else if (initIP.contains(":")){
 			// <ip>:<port> format
 			initPort = Integer.parseInt(initIP.split(":")[1]);
 			initIP = initIP.split(":")[0];
 		} else { // port separately entered
 			System.out.println("Enter port");
-			initPort = inputScanner.nextInt();
+			initPort = Integer.parseInt(inputScanner.nextLine());
 		}
 		System.out.println("Enter name of peer:");
 		String name = inputScanner.nextLine();
