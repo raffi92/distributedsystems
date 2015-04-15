@@ -76,8 +76,7 @@ public class Server implements Runnable {
 			try {
 				DataInputStream in = new DataInputStream(socket.getInputStream());
 				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-				JSONObject message = null;
-				message = new JSONObject(in.readUTF());
+				JSONObject message = new JSONObject(in.readUTF());
 
 				// add entries from other node
 				if (message.has("table")) {
@@ -94,9 +93,34 @@ public class Server implements Runnable {
 				if (message.has("all")) {
 					manager.forwardOneToAll(message);
 				}
-				// forward one-to-one message
-				if (message.has("OneToOne")) {
-					manager.forwardOneToOne(message);
+				// lookup for one-to-one message
+				if (message.has("target")) {
+					manager.lookUp(message);
+// possible thread invocation for concurrent server
+//					new Thread( new Runnable() {
+//					    @Override
+//					    public void run() {
+//					    	manager.lookUp(message);
+//					    }
+//					}).start();
+				}
+				
+				// send one-to-one message
+				if (message.has("targetIP")){
+					String ip = null;
+					int port = 0;
+					String mes = null;
+					ip = message.getString("targetIP");
+					port = message.getInt("targetPort");
+					mes = message.getString("message");
+					System.out.println("test");
+					manager.sendOneToOne(ip, port, mes);
+				}
+				
+				// receive one-to-one message
+				if (message.has("oneToOneMessage")){
+					System.out.println(message);
+					System.out.println(message.get("oneToOneMessage"));
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
