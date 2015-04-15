@@ -30,13 +30,15 @@ public class Management {
 	ServerSocket listener;
 	Socket client;
 	Thread pushService;
-
+	
 	public Socket connecting(int port, String ip) {
 		try {
 			client = new Socket(ip, port);
 		} catch (IOException e) {
 			if (e.getMessage().equals("Connection refused")) {
 				removeEntry(ip, port);
+				System.out.println("removed " + ip + ":" + port);
+				printTable();
 				return null;
 			} else {
 				e.printStackTrace();
@@ -193,7 +195,6 @@ public class Management {
 			// send to one random node in table
 			NodeEntry next = randomNode();
 			Socket forwardSocket = connecting(next.getPort(), next.getIP());
-			//System.out.println("only forwarding");
 			try {
 				DataOutputStream out = new DataOutputStream(forwardSocket.getOutputStream());
 				out.writeUTF(message.toString());
@@ -238,7 +239,6 @@ public class Management {
 			try {
 				DataOutputStream out = new DataOutputStream(forwardSocket.getOutputStream());
 				out.writeUTF(message.toString());
-				//System.out.println("forwarded");
 			} catch (IOException e) {
 				if (e.getMessage().equals("Socket is closed")) {
 					removeEntry(next.getIP(), next.getPort());
@@ -254,18 +254,22 @@ public class Management {
 		// build json object
 		JSONObject mes = new JSONObject();
 		try {
-			mes.put("OneToOne", message);
+			mes.put("message", message);
 			mes.put("target", name);
+			mes.put("sender", getSelfNode().getIP() + ":" + getSelfNode().getPort());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		
 		// search for target in own table
-		NodeEntry next = null;
-		if(searchByName(name) != null)
-			next = searchByName(name);
-		else {
-			// select random node
+		NodeEntry next = searchByName(name);
+		// select random node
+		if (next == null){
 			next = randomNode();
+		} else {
+			System.out.println("peer found in own table");
+			sendOneToOne(next.getIP(), next.getPort(), message);
+			return;
 		}
 		// no entries in table
 		if (next == null)
@@ -283,30 +287,37 @@ public class Management {
 		disconnecting(nextSocket);
 	}
 	
-	public void forwardOneToOne(JSONObject mes){
+	public void lookUp(JSONObject mes){
 		// parse jsonObject
 		String target = null;
+		String sender = null;
 		String text = null;
 		try {
 			target = mes.getString("target");
-			text = mes.getString("OneToOne");
+			sender = mes.getString("sender");
+			text = mes.getString("message");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
-		// check if message is for me
-		if (selfNode.getName().equals(target)){
-			System.out.println(text);
-			return;
-		} 
-		
-		// check if target is in own table
+		// check if target is in current nodes table
 		NodeEntry next = searchByName(target);
 		// select random node
 		if (next == null){
 			next = randomNode();
+		} else {
+			// add information about target
+			mes = new JSONObject();
+			try {
+				mes.put("targetIP", next.getIP());
+				mes.put("targetPort", next.getPort());
+				mes.put("message", text);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			// inform sender
+			next = new NodeEntry(sender.split(":")[0], Integer.parseInt(sender.split(":")[1]), null);
 		}
-		
 		// connect and send
 		Socket forward = connecting(next.getPort(), next.getIP());
 		try {
@@ -318,6 +329,29 @@ public class Management {
 		
 		// close
 		disconnecting(forward);
+		
+	}
+	
+	public void sendOneToOne(String ip, int port, String message){
+		JSONObject mes = new JSONObject();
+		try {
+			mes.put("oneToOneMessage", message);
+			mes.put("sendFrom", selfNode.getName());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		// connect 
+		Socket target = connecting(port, ip);
+		// send
+		try {
+			DataOutputStream out = new DataOutputStream(target.getOutputStream());
+			out.writeUTF(mes.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		disconnecting(target);
+		
 		
 	}
 
@@ -335,7 +369,7 @@ public class Management {
 		deleteSelfRef();
 		deleteDoubleRef();
 		// limit of node entries in table //TODO eventuell ändern
-		int maxNumberOfNodes = 5;
+		int maxNumberOfNodes = 3;
 		while (table.size() > maxNumberOfNodes) {
 			int rand = new Random().nextInt(table.size());
 			table.remove(rand);
