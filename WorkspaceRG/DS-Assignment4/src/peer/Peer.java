@@ -36,9 +36,8 @@ public class Peer {
 		if (initIP.equals("0")) // new network
 			initPort = 0;
 		else if (initIP.contains(":")){
-			// <ip>:<port> format
-			initPort = Integer.parseInt(initIP.split(":")[1]);
 			initIP = initIP.split(":")[0];
+			initPort = Integer.parseInt(initIP.split(":")[1]);
 		}
 		else { // port separately entered
 			System.out.println("Enter port");
