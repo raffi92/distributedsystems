@@ -64,7 +64,7 @@ public class Server implements Runnable {
 		running = false;
 		manager.quit();
 	}
-
+	// listen for input
 	private class Listener extends Thread {
 		private Socket socket;
 
@@ -85,6 +85,9 @@ public class Server implements Runnable {
 					manager.parseJsonArray(tableArray);
 					// delete double entries and self reference
 					manager.deleteInvalid();
+					// delete nodes removed from sender
+					if (message.has("removed"))
+						manager.removeInvalidNodes(message.getJSONArray("removed"));
 					// respond with own table
 					JSONObject respond = manager.buildJsonObjectOfTable();
 					out.writeUTF(respond.toString());
@@ -96,13 +99,6 @@ public class Server implements Runnable {
 				// lookup for one-to-one message
 				if (message.has("target")) {
 					manager.lookUp(message);
-// possible thread invocation for concurrent server
-//					new Thread( new Runnable() {
-//					    @Override
-//					    public void run() {
-//					    	manager.lookUp(message);
-//					    }
-//					}).start();
 				}
 				
 				// send one-to-one message
@@ -113,14 +109,17 @@ public class Server implements Runnable {
 					ip = message.getString("targetIP");
 					port = message.getInt("targetPort");
 					mes = message.getString("message");
-					System.out.println("test");
 					manager.sendOneToOne(ip, port, mes);
 				}
 				
 				// receive one-to-one message
 				if (message.has("oneToOneMessage")){
-					System.out.println(message);
 					System.out.println(message.get("oneToOneMessage"));
+				}
+				
+				// receiver not reachable
+				if (message.has("reachable")){
+					System.out.println("Receiver not reachable");
 				}
 			} catch (IOException e1) {
 				e1.printStackTrace();

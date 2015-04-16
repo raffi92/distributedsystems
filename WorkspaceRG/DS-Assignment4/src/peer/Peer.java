@@ -16,19 +16,19 @@ import networkManagement.Management;
 public class Peer {
 	private Management manager = new Management();
 	private Server server;
-	private Client client;
+	private Applicant client;
 	private Scanner inputScanner;
 	Thread serverThread;
 	Thread clientThread;
+	private int initPort = -1;
+	private String initIP = "localhost";
 	
 	// init peer
 	public Peer() {
-		String initIP = "localhost";
-		int initPort = 0;
 		// user enter ip and port of one peer in the network
 		System.out.println("Enter IP or 0 to create new network");
 		inputScanner = new Scanner(System.in);
-		// TODO fehlerbehandlung bei falschem input
+		
 		initIP = inputScanner.nextLine();
 		if (initIP.equals("0")) // new network
 			initPort = 0;
@@ -37,18 +37,13 @@ public class Peer {
 			initPort = Integer.parseInt(initIP.split(":")[1]);
 			initIP = initIP.split(":")[0];
 		} else { // port separately entered
-			System.out.println("Enter port");
-			initPort = Integer.parseInt(inputScanner.nextLine());
+			while (readPort() == -1);
 		}
 		System.out.println("Enter name of peer:");
 		String name = inputScanner.nextLine();
 		server = new Server(manager, name); // listener for new peer
-		new CommandListener(server).start(); // command listener
-		Thread pushThread = new Thread(new PushingService()); // start pushing
-																// service
-		pushThread.start();
-		manager.setPushServiceThread(pushThread);
-		client = new Client(initIP, initPort, manager); // client
+		client = new Applicant(initIP, initPort, manager, inputScanner); // client
+		
 	}
 
 	/**
@@ -58,9 +53,30 @@ public class Peer {
 		Thread serverThread = new Thread(server);
 		Thread clientThread = new Thread(client);
 		clientThread.run();
+		if (client.started()){
+			initServices();
+		}
 		serverThread.run();
 
 		System.out.println("Peer shutdown");
+	}
+	// init command listener and pushing service for tables
+	public void initServices(){
+		new CommandListener(server).start(); // command listener
+		Thread pushThread = new Thread(new PushingService()); // start pushing
+																// service
+		pushThread.start();
+		manager.setPushServiceThread(pushThread);
+	}
+	// read initport
+	public int readPort(){
+		System.out.println("Enter port");
+		try {
+			initPort = Integer.parseInt(inputScanner.nextLine());
+		} catch (NumberFormatException e){
+			initPort = -1;
+		}
+		return initPort;
 	}
 
 	/**
@@ -90,26 +106,31 @@ public class Peer {
 					closed = true;
 				}
 				// print table of peers
-				if (command.equals("table")) {
+				else if (command.equals("table")) {
 					manager.getCurrentState();
 				}
 				// print possible commands
-				if (command.equals("help")) {
+				else if (command.equals("help")) {
 					System.out.println("Commands:\nquit - exit peer\ntable - list node table of peer\nall - send a one to all message\nsend - send a message to one peer\n");
 				}
 				// one to all message
-				if (command.equals("all")) {
+				else if (command.equals("all")) {
 					System.out.println("Enter message:");
 					String info = inputScanner.nextLine();
 					manager.oneToAll(info);
 				}
 				// contact one peer
-				if (command.equals("send")){
+				else if (command.equals("send")){
 					System.out.println("Enter message:");
 					String mes = inputScanner.nextLine();
 					System.out.println("Enter name:");
 					String target = inputScanner.nextLine();
 					manager.contactPeer(target, mes);
+				}
+				
+				else {
+					System.out.println("no such command");
+					System.out.println("Commands:\nquit - exit peer\ntable - list node table of peer\nall - send a one to all message\nsend - send a message to one peer\n");
 				}
 			}
 		}
@@ -127,6 +148,7 @@ public class Peer {
 		public void run() {
 			while (manager.isRunning()) {
 				try {
+					// share nodes every 10 sec
 					Thread.sleep(10000);
 				} catch (InterruptedException e) {
 					pushing = false;
