@@ -12,10 +12,6 @@ import networkManagement.Management;
  * client send requests to other peers 
  * server listen to new connected peer (delegate ip and port to the manager)
  * server response to incoming requests of other peers
- * TODO anzahl der nodes die im table gehalten werden??? derzeit fixiert mit 5. Angabe nochmal nachlesen
- * TODO fehlerbehandlung bei falschen eingaben vom user
- * TODO fehlerbehandlung bei peer die bereits offline sind. bei tabellenaustausch bereits implementiert, aber bei one to all message fehlt das noch
- * TODO remove nodes die offline sind
  */
 public class Peer {
 	private Management manager = new Management();
