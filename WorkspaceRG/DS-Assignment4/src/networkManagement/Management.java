@@ -26,6 +26,7 @@ import org.json.JSONObject;
 public class Management {
 	// shared variables between server and client of one peer
 	ArrayList<NodeEntry> table = new ArrayList<NodeEntry>();
+	ArrayList<NodeEntry> removedNodes = new ArrayList<>();
 	NodeEntry selfNode;
 	ServerSocket listener;
 	Socket client;
@@ -37,12 +38,23 @@ public class Management {
 		} catch (IOException e) {
 			if (e.getMessage().equals("Connection refused")) {
 				removeEntry(ip, port);
+				removedNodes.add(new NodeEntry(ip, port, null));
 				System.out.println("removed " + ip + ":" + port);
 				printTable();
 				return null;
 			} else {
 				e.printStackTrace();
 			}
+		}
+		return client;
+	}
+	
+	public Socket initConnecting(int port, String ip) {
+		try {
+			client = new Socket(ip, port);
+		} catch (IOException e) {
+			System.out.println("connection unsuccessfully");
+			return null;
 		}
 		return client;
 	}
@@ -65,6 +77,28 @@ public class Management {
 	}
 
 	public void setLocalPeerAddress(ServerSocket sock, String name) {
+		// get public ip
+//		BufferedReader in = null;
+//        try {
+//        	URL whatismyip = new URL("http://checkip.amazonaws.com");
+//            
+//            in = new BufferedReader(new InputStreamReader(
+//                    whatismyip.openStream()));
+//            String ip = in.readLine();
+//            System.out.println(ip);
+//        } catch (MalformedURLException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} finally {
+//            if (in != null) {
+//                try {
+//                    in.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
 		try {
 			selfNode = new NodeEntry(InetAddress.getLocalHost().getHostAddress() + ":" + sock.getLocalPort(), name);
 		} catch (UnknownHostException e2) {
@@ -82,6 +116,8 @@ public class Management {
 
 	// used in pushService
 	public void shareNodes() {
+		// delete removed nodes
+		removedNodes.clear();
 		// select node one node in table
 		NodeEntry selected = randomNode();
 		// no entries to share
@@ -102,6 +138,11 @@ public class Management {
 			DataOutputStream out = new DataOutputStream(sharingSocket.getOutputStream());
 			DataInputStream in = new DataInputStream(sharingSocket.getInputStream());
 			JSONObject jsonTable = buildJsonObjectOfTable();
+			// add removed nodes
+			if (removedNodes.size() >  0){
+				JSONArray invalidNodes = new JSONArray(removedNodes);
+				jsonTable.put("removed", invalidNodes);
+			}
 			// send all node entries to this node
 			out.writeUTF(jsonTable.toString());
 			JSONObject answer = new JSONObject(in.readUTF());
@@ -122,8 +163,8 @@ public class Management {
 	/**
 	 * 
 	 * @param info
-	 *            - text to send json object {nodes: table, message: text to
-	 *            send}
+	 *            - text to send json object {informed nodes: table, message: text to
+	 *            send, hops: number of double informed nodes}
 	 */
 	public void oneToAll(String info) {
 		JSONObject toAll = new JSONObject();
@@ -137,24 +178,32 @@ public class Management {
 		} catch (JSONException e1) {
 			e1.printStackTrace();
 		}
-		System.out.println(toAll);
 
 		// send to one random node
 		NodeEntry next = randomNode();
 		Socket infoSocket = connecting(next.getPort(), next.getIP());
-		try {
-			DataOutputStream out = new DataOutputStream(infoSocket.getOutputStream());
-			out.writeUTF(toAll.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
+		while (infoSocket == null){
+			next = randomNode();
+			if (next == null) {
+				return;
+			}
+			infoSocket = connecting(next.getPort(), next.getIP());
 		}
-		disconnecting(infoSocket);
+		// no connection
+		if (infoSocket != null){
+			try {
+				DataOutputStream out = new DataOutputStream(infoSocket.getOutputStream());
+				out.writeUTF(toAll.toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			disconnecting(infoSocket);
+		}
 	}
 
 	// parse table of nodes that know the info
 	// send info to nodes that don't know the info and add this nodes
-	// five times no new nodes to the table of known nodes -> finish
-	// TODO if node already exited -> select new (connecting until not null)
+	// finish if hops is to high
 	public void forwardOneToAll(JSONObject message) {
 		// get already informed nodes
 		ArrayList<NodeEntry> informedNodes = new ArrayList<NodeEntry>();
@@ -195,14 +244,23 @@ public class Management {
 			// send to one random node in table
 			NodeEntry next = randomNode();
 			Socket forwardSocket = connecting(next.getPort(), next.getIP());
-			try {
-				DataOutputStream out = new DataOutputStream(forwardSocket.getOutputStream());
-				out.writeUTF(message.toString());
-			} catch (IOException e) {
-				e.printStackTrace();
+			while (forwardSocket == null){
+				next = randomNode();
+				if (next == null) {
+					return;
+				}
+				forwardSocket = connecting(next.getPort(), next.getIP());
 			}
 			
-			
+			if (forwardSocket != null){
+				try {
+					DataOutputStream out = new DataOutputStream(forwardSocket.getOutputStream());
+					out.writeUTF(message.toString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				disconnecting(forwardSocket);
+			}
 		} else if (prevHops < wall){
 			try {
 				System.out.println(message.get("all"));
@@ -218,44 +276,55 @@ public class Management {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			
+			// select next node
 			NodeEntry next = null;
-			if (uninformed.size() > 0) { // select one random entry
-				next = randomNode(uninformed);
-			} else { // forward to one already informed node and increment hop
-				next = randomNode();
-				int hops;
-				try {
-					hops = message.getInt("hops");
-					message.put("hops", hops++);
-				} catch (JSONException e) {
-					e.printStackTrace();
+			Socket forwardSocket = null;
+			while (forwardSocket == null){
+				if (uninformed.size() > 0) { // select one random entry
+					next = randomNode(uninformed);
+				} else { // forward to one already informed node and increment hop
+					next = randomNode();
+					int hops;
+					try {
+						hops = message.getInt("hops");
+						message.put("hops", hops++);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
-				
+				if (next == null)
+					return;
+				forwardSocket = connecting(next.getPort(), next.getIP());
 			}
-
 			// forward message
-			Socket forwardSocket = connecting(next.getPort(), next.getIP());
-			try {
-				DataOutputStream out = new DataOutputStream(forwardSocket.getOutputStream());
-				out.writeUTF(message.toString());
-			} catch (IOException e) {
-				if (e.getMessage().equals("Socket is closed")) {
-					removeEntry(next.getIP(), next.getPort());
-					uninformed.remove(next);
-				} else
-					e.printStackTrace();
+			if (forwardSocket != null){
+				try {
+					DataOutputStream out = new DataOutputStream(forwardSocket.getOutputStream());
+					out.writeUTF(message.toString());
+				} catch (IOException e) {
+					if (e.getMessage().equals("Socket is closed")) {
+						removeEntry(next.getIP(), next.getPort());
+						uninformed.remove(next);
+					} else
+						e.printStackTrace();
+				}
+				disconnecting(forwardSocket);
 			}
-			disconnecting(forwardSocket);
 		}
 	}
-	
+	// initial message to send a one-to-one message
+	// format
+	// message: text to send
+	// target: name of the receiver
+	// hops: number of double asked nodes
+	// sender: address of the sender
 	public void contactPeer(String name, String message){
 		// build json object
 		JSONObject mes = new JSONObject();
 		try {
 			mes.put("message", message);
 			mes.put("target", name);
+			mes.put("hops", 0);
 			mes.put("sender", getSelfNode().getIP() + ":" + getSelfNode().getPort());
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -272,10 +341,22 @@ public class Management {
 			return;
 		}
 		// no entries in table
-		if (next == null)
+		if (next == null){
+			System.out.println("not connected to a peer");
 			return;
+		}
+			
 		// connect
-		Socket nextSocket = connecting(next.getPort(), next.getIP());
+		Socket nextSocket = null;
+		nextSocket = connecting(next.getPort(), next.getIP());
+		// connect
+		while (nextSocket == null){
+			next = randomNode();
+			// no entries in table
+			if (next == null)
+				return;
+			nextSocket = connecting(next.getPort(), next.getIP());
+		}
 		// send 
 		try {
 			DataOutputStream out = new DataOutputStream(nextSocket.getOutputStream());
@@ -286,26 +367,44 @@ public class Management {
 		// close
 		disconnecting(nextSocket);
 	}
-	
+	// lookup function to get the receiver address
+	// add targetIp and targetPort if target is found in some table
+	// not found -> add reachable = false to the message
 	public void lookUp(JSONObject mes){
 		// parse jsonObject
 		String target = null;
 		String sender = null;
 		String text = null;
+		int hops = 0;
 		try {
 			target = mes.getString("target");
 			sender = mes.getString("sender");
 			text = mes.getString("message");
+			hops = mes.getInt("hops");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
 		// check if target is in current nodes table
 		NodeEntry next = searchByName(target);
+		boolean targetFound = false;
 		// select random node
-		if (next == null){
-			next = randomNode();
+		if (next == null ){
+			// inform sender that receiver is not reachable
+			if (hops > Math.max(table.size()*20, 15)){
+				next = new NodeEntry(sender.split(":")[0], Integer.parseInt(sender.split(":")[1]), null);
+				mes = new JSONObject();
+				
+				try {
+					mes.put("reachable", false);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			} else {
+				next = randomNode();
+			}
 		} else {
+			targetFound = true;
 			// add information about target
 			mes = new JSONObject();
 			try {
@@ -320,18 +419,39 @@ public class Management {
 		}
 		// connect and send
 		Socket forward = connecting(next.getPort(), next.getIP());
-		try {
-			DataOutputStream out = new DataOutputStream(forward.getOutputStream());
-			out.writeUTF(mes.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (targetFound && forward == null){
+			System.out.println("sender exited");
+			return;
+		}
+		if (!targetFound){
+			while (forward == null){
+				next = randomNode();
+				if (next == null)
+					return;
+				forward = connecting(next.getPort(), next.getIP());
+			}
+			try {
+				mes.put("hops", (++hops));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 		
-		// close
-		disconnecting(forward);
+		// forward message
+		if (forward != null){
+			try {
+				DataOutputStream out = new DataOutputStream(forward.getOutputStream());
+				out.writeUTF(mes.toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// close
+			disconnecting(forward);
+		}
+		
 		
 	}
-	
+	// send the message if sender got the address of the receiver
 	public void sendOneToOne(String ip, int port, String message){
 		JSONObject mes = new JSONObject();
 		try {
@@ -342,6 +462,10 @@ public class Management {
 		}
 		// connect 
 		Socket target = connecting(port, ip);
+		if (target == null){
+			System.out.println("receiver offline");
+			return;
+		}
 		// send
 		try {
 			DataOutputStream out = new DataOutputStream(target.getOutputStream());
@@ -351,15 +475,9 @@ public class Management {
 		}
 		
 		disconnecting(target);
-		
-		
 	}
 
-	/**
-	 * 
-	 * @param ipPort
-	 *            : format will be <ip address>:<port>
-	 */
+	// add new entry to table. format will be <ip address>:<port>
 	public void addEntry(NodeEntry ipPort) {
 		table.add(ipPort);
 	}
@@ -368,8 +486,7 @@ public class Management {
 		// delete invalid nodes
 		deleteSelfRef();
 		deleteDoubleRef();
-		// limit of node entries in table //TODO eventuell ändern
-		int maxNumberOfNodes = 3;
+		int maxNumberOfNodes = 5;
 		while (table.size() > maxNumberOfNodes) {
 			int rand = new Random().nextInt(table.size());
 			table.remove(rand);
@@ -452,9 +569,9 @@ public class Management {
 		}
 	}
 	// build json object of own node table
+	@SuppressWarnings("unchecked")
 	public JSONObject buildJsonObjectOfTable() {
 		JSONObject jsonTable = new JSONObject();
-		@SuppressWarnings("unchecked")
 		ArrayList<NodeEntry> tmp = (ArrayList<NodeEntry>) table.clone();
 		tmp.add(getSelfNode());
 		JSONArray node = new JSONArray(tmp);
@@ -485,8 +602,13 @@ public class Management {
 		Iterator<NodeEntry> iter = table.iterator();
 		while (iter.hasNext()) {
 			NodeEntry tmp = iter.next();
+			try {
 			if (tmp.getIP().equals(selfNode.getIP()) && tmp.getPort() == selfNode.getPort()) {
 				iter.remove();
+			}
+			} catch (NullPointerException e){
+				printTable();
+				System.out.println(selfNode.getIP());
 			}
 		}
 	}
@@ -505,7 +627,7 @@ public class Management {
 	public ArrayList<NodeEntry> getTable() {
 		return table;
 	}
-	
+	// used for table
 	public void parseJsonArray(JSONArray input){
 		// parse each element
 		for (int i = 0; i < input.length(); i++) {
@@ -514,13 +636,16 @@ public class Management {
 			try {
 				tmp1 = (JSONObject) input.get(i);
 				tmp2 = new NodeEntry(tmp1.getString("IP"), tmp1.getInt("port"), tmp1.getString("name"));
-			} catch (JSONException e) {
+			} catch (ClassCastException e){
+				
+			}
+			catch (JSONException e) {
 				e.printStackTrace();
 			}
 			addEntry(tmp2);
 		}
 	}
-	
+	// used for informed nodes in one-to-all messages
 	public ArrayList<NodeEntry> parseJsonArray(JSONArray input, ArrayList<NodeEntry> output){
 		for (int i = 0; i < input.length(); i++) {
 			JSONObject tmp;
@@ -535,7 +660,20 @@ public class Management {
 		}
 		return output;
 	}
-	
+	// used for removed nodes in the table
+	public void removeInvalidNodes(JSONArray input){
+		// parse each element
+		for (int i = 0; i < input.length(); i++) {
+			JSONObject tmp1 = null;
+			try {
+				tmp1 = (JSONObject) input.get(i);
+				removeEntry(tmp1.getString("IP"), tmp1.getInt("port"));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	// used in lookup
 	private NodeEntry searchByName(String target){
 		for (int i = 0; i < table.size(); i++){
 			if (table.get(i).getName().equals(target)){
