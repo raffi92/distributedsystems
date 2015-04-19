@@ -1,5 +1,4 @@
 package networkManagement;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -39,8 +38,6 @@ public class Management {
 			if (e.getMessage().equals("Connection refused")) {
 				removeEntry(ip, port);
 				removedNodes.add(new NodeEntry(ip, port, null));
-				System.out.println("removed " + ip + ":" + port);
-				printTable();
 				return null;
 			} else {
 				e.printStackTrace();
@@ -602,13 +599,8 @@ public class Management {
 		Iterator<NodeEntry> iter = table.iterator();
 		while (iter.hasNext()) {
 			NodeEntry tmp = iter.next();
-			try {
 			if (tmp.getIP().equals(selfNode.getIP()) && tmp.getPort() == selfNode.getPort()) {
 				iter.remove();
-			}
-			} catch (NullPointerException e){
-				printTable();
-				System.out.println(selfNode.getIP());
 			}
 		}
 	}
@@ -636,10 +628,7 @@ public class Management {
 			try {
 				tmp1 = (JSONObject) input.get(i);
 				tmp2 = new NodeEntry(tmp1.getString("IP"), tmp1.getInt("port"), tmp1.getString("name"));
-			} catch (ClassCastException e){
-				
-			}
-			catch (JSONException e) {
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			addEntry(tmp2);
