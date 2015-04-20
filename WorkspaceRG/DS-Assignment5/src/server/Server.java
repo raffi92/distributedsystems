@@ -1,5 +1,6 @@
 package server;
 
+import interfaces.CallbackIF;
 import interfaces.ServerIF;
 import client.Callback;
 import client.Client;
@@ -14,7 +15,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class Server extends UnicastRemoteObject implements ServerIF{
 
 	private static final long serialVersionUID = 1L;
-	private Callback call;
+	private CallbackIF call;
 	
 	protected Server() throws RemoteException {
 		super();
@@ -60,7 +61,7 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	}
 
 	@Override
-	public String deepThought(Callback callback) throws RemoteException {
+	public String deepThought(CallbackIF callback) throws RemoteException {
 		call = callback;
 		Thread thread = new Thread(new Runnable(){
 			public void run(){
@@ -114,4 +115,5 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	      System.out.println(ex.getMessage());
 	    }
 	  }
+
 }

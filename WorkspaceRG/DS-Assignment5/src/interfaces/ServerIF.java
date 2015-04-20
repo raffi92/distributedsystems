@@ -28,7 +28,7 @@ public interface ServerIF extends Remote{
 	public int factorail(int bound) throws RemoteException;
 	
 	// deep thought
-	public String deepThought(Callback callback) throws RemoteException;
+	public String deepThought(CallbackIF callback) throws RemoteException;
 	
 	// run deep thought
 	public String runDeepThought() throws RemoteException;

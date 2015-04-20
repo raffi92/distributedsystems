@@ -1,5 +1,6 @@
 package client;
 
+import interfaces.CallbackIF;
 import interfaces.ServerIF;
 
 import java.net.MalformedURLException;
@@ -18,7 +19,7 @@ public class Client {
 	private String operation;
 	private int result;
 	private boolean running;
-	public Callback callback;
+	public CallbackIF callback;
 	
 	public Client() throws RemoteException {
 		input = new Scanner(System.in);
@@ -69,8 +70,7 @@ public class Client {
 				result = server.power(first, second);
 				printResult();
 				break;
-			case 8:
-				//TODO fix Bug "marshal arguments exception"				
+			case 8:				
 				operation = "DeepThought";
 				callback = new Callback(enterQuestion());
 				server.deepThought(callback);

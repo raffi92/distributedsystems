@@ -22,7 +22,7 @@ public final class Server_Stub
     static {
 	try {
 	    $method_addition_0 = interfaces.ServerIF.class.getMethod("addition", new java.lang.Class[] {int.class, int.class});
-	    $method_deepThought_1 = interfaces.ServerIF.class.getMethod("deepThought", new java.lang.Class[] {client.Callback.class});
+	    $method_deepThought_1 = interfaces.ServerIF.class.getMethod("deepThought", new java.lang.Class[] {interfaces.CallbackIF.class});
 	    $method_division_2 = interfaces.ServerIF.class.getMethod("division", new java.lang.Class[] {int.class, int.class});
 	    $method_factorail_3 = interfaces.ServerIF.class.getMethod("factorail", new java.lang.Class[] {int.class});
 	    $method_multiplication_4 = interfaces.ServerIF.class.getMethod("multiplication", new java.lang.Class[] {int.class, int.class});
@@ -59,12 +59,12 @@ public final class Server_Stub
 	}
     }
     
-    // implementation of deepThought(Callback)
-    public java.lang.String deepThought(client.Callback $param_Callback_1)
+    // implementation of deepThought(CallbackIF)
+    public java.lang.String deepThought(interfaces.CallbackIF $param_CallbackIF_1)
 	throws java.rmi.RemoteException
     {
 	try {
-	    Object $result = ref.invoke(this, $method_deepThought_1, new java.lang.Object[] {$param_Callback_1}, -7843981297584082244L);
+	    Object $result = ref.invoke(this, $method_deepThought_1, new java.lang.Object[] {$param_CallbackIF_1}, 5363506344917373891L);
 	    return ((java.lang.String) $result);
 	} catch (java.lang.RuntimeException e) {
 	    throw e;

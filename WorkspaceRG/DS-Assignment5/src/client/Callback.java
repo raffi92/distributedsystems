@@ -1,9 +1,15 @@
 package client;
 
-public class Callback {
+import java.rmi.server.UnicastRemoteObject;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import interfaces.CallbackIF;
+
+public class Callback extends UnicastRemoteObject implements CallbackIF {
 	private String question;
 	
-	public Callback(String question){
+	public Callback(String question) throws RemoteException{
+		super();
 		this.question = question;
 	}
 	
