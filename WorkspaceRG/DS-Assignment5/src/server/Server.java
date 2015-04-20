@@ -2,9 +2,6 @@ package server;
 
 import interfaces.CallbackIF;
 import interfaces.ServerIF;
-import client.Callback;
-import client.Client;
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -12,6 +9,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+// TODO mehrere Clients gleichzeitig?? - Server extends Thread or implements runnable
+// TODO quit server??
 public class Server extends UnicastRemoteObject implements ServerIF{
 
 	private static final long serialVersionUID = 1L;
@@ -76,7 +75,6 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	}
 
 	@Override
-	//TODO Sysout methods not printing from Callback-Class
 	public String runDeepThought() throws RemoteException {
 		call.getState("Starting DeepThought...");
 		try {
@@ -87,7 +85,6 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 			Thread.sleep(2000);
 			call.finish(42);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

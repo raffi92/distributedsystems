@@ -12,11 +12,12 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
+
+// TODO schönes shotdown bei 0 (irgendein thread läuft weiter nach deepThought)
 public class Client {
 	private static ServerIF server;
 	private static String url = "//127.0.0.1/Server";
 	private Scanner input;
-	private int method;
 	private int first;
 	private int second;
 	private String operation;
@@ -30,7 +31,7 @@ public class Client {
 		while (running) {
 			System.out
 					.println("Please enter your Operation:\n0...Exit\n1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n5...Division\n6...Square\n7...Power\n8...DeepThought");
-			switch (method = input.nextInt()) {
+			switch (input.nextInt()) {
 			case 1:
 				operation = "Addition";
 				enterNumbers();
@@ -122,7 +123,7 @@ public class Client {
 	public static void main(String[] args) {
 		try {
 			server = (ServerIF) Naming.lookup(url);
-			Client client = new Client();
+			new Client();
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			e.printStackTrace();
 		}

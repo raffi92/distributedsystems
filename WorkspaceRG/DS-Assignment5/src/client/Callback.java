@@ -1,11 +1,14 @@
 package client;
 
 import java.rmi.server.UnicastRemoteObject;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import interfaces.CallbackIF;
 
 public class Callback extends UnicastRemoteObject implements CallbackIF {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String question;
 	
 	public Callback(String question) throws RemoteException{

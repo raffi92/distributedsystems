@@ -3,7 +3,6 @@ package interfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import client.Callback;
 
 public interface ServerIF extends Remote{
 	// addition
