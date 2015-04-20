@@ -63,15 +63,15 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	@Override
 	public String deepThought(CallbackIF callback) throws RemoteException {
 		call = callback;
-		Thread thread = new Thread(new Runnable(){
-			public void run(){
+		new Thread(new Runnable(){
+			public  void run(){
 				try {
 					runDeepThought();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
-		});
+		}).start();
 		return null;
 	}
 

@@ -3,6 +3,9 @@ package client;
 import interfaces.CallbackIF;
 import interfaces.ServerIF;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -72,12 +75,16 @@ public class Client {
 				break;
 			case 8:				
 				operation = "DeepThought";
-				callback = new Callback(enterQuestion());
+				String question = enterQuestion();
+				callback = new Callback(question);
 				server.deepThought(callback);
 				break;
 			case 0:
 				System.out.println("Client shutdown...");
-				System.exit(0);
+				running = false;
+				break;
+			default:
+				System.out.println("Please try again!");
 				break;
 			}
 		}
@@ -97,7 +104,15 @@ public class Client {
 
 	public String enterQuestion(){
 		System.out.println("Please enter your question!\n");
-		return input.next();
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String input = null;
+		try {
+			input = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return input;
 	}
 	public void printResult() {
 		System.out.println("The Result of the Operation " + operation + " is "
