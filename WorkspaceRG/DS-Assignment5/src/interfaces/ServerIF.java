@@ -31,4 +31,5 @@ public interface ServerIF extends Remote{
 	
 	// run deep thought
 	public String runDeepThought() throws RemoteException;
+	
 }

@@ -3,17 +3,14 @@ package client;
 import interfaces.CallbackIF;
 import interfaces.ServerIF;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
 
-// TODO schönes shotdown bei 0 (irgendein thread läuft weiter nach deepThought)
 public class Client {
 	private static ServerIF server;
 	private static String url = "//127.0.0.1/Server";
@@ -28,10 +25,16 @@ public class Client {
 	public Client() throws RemoteException {
 		input = new Scanner(System.in);
 		running = true;
+		int scanned = -1;
 		while (running) {
 			System.out
 					.println("Please enter your Operation:\n0...Exit\n1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n5...Division\n6...Square\n7...Power\n8...DeepThought");
-			switch (input.nextInt()) {
+			while (!input.hasNextInt()){
+				input.next();	// waste if input is string
+				System.out.println("Enter the number of your operation");
+			}
+			scanned = input.nextInt();
+			switch (scanned) {
 			case 1:
 				operation = "Addition";
 				enterNumbers();
@@ -78,11 +81,15 @@ public class Client {
 				operation = "DeepThought";
 				String question = enterQuestion();
 				callback = new Callback(question);
+				
 				server.deepThought(callback);
 				break;
 			case 0:
 				System.out.println("Client shutdown...");
 				running = false;
+				input.close();
+				// remove callback from rmi runtime
+				UnicastRemoteObject.unexportObject(callback, true);
 				break;
 			default:
 				System.out.println("Please try again!");
@@ -105,14 +112,7 @@ public class Client {
 
 	public String enterQuestion(){
 		System.out.println("Please enter your question!\n");
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String input = null;
-		try {
-			input = br.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String input = this.input.next();
 		return input;
 	}
 	public void printResult() {
