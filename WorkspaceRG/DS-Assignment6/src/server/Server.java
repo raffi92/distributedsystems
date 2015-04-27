@@ -1,6 +1,5 @@
 package server;
 
-import interfaces.CallbackIF;
 import interfaces.ServerIF;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -8,14 +7,24 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Server extends UnicastRemoteObject implements ServerIF{
-
+	private static String serverName = "Server";
 	private static final long serialVersionUID = 1L;
-	private CallbackIF call;
+	// service to execute jobs
+	ExecutorService exec = Executors.newCachedThreadPool();
 	
 	protected Server() throws RemoteException {
 		super();
+		// shutdown service
+		new Shutdown(this, serverName).start();
+		System.out.println("Server started\nEnter 'quit' to exit Server");
+		
 	}
 
 	@Override
@@ -57,36 +66,6 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 		return (int) java.lang.Math.pow(first,second);
 	}
 
-	@Override
-	public String deepThought(CallbackIF callback) throws RemoteException {
-		call = callback;
-		new Thread(new Runnable(){
-			public  void run(){
-				try {
-					runDeepThought();
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
-		return null;
-	}
-
-	@Override
-	public String runDeepThought() throws RemoteException {
-		call.getState("Starting DeepThought...");
-		try {
-			Thread.sleep(3000);
-			call.getState("Still running...");
-			Thread.sleep(3000);
-			call.getState("Please be patient, still running...");
-			Thread.sleep(2000);
-			call.finish(42);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	/** instead of manuell command rmiregistry in the console 
 	 * registration in main method
@@ -101,7 +80,7 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	      System.out.println(ex.getMessage());
 	    }
 	    try {
-	      Naming.rebind("Server", new Server());
+	      Naming.rebind(serverName, new Server());
 	    }
 	    catch (MalformedURLException ex) {
 	      System.out.println(ex.getMessage());
@@ -110,5 +89,22 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	      System.out.println(ex.getMessage());
 	    }
 	  }
+
+	@Override
+	// TODO change return type, also in interface
+	public String submit(Callable<String> job) throws RemoteException {
+		Future<String> res = exec.submit(job);
+		String resu = null;
+		try {
+			resu = (String) res.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		//Job<T> ret = new JobImpl(resu);
+		
+		return "result from server: " + resu;
+	}
 
 }
