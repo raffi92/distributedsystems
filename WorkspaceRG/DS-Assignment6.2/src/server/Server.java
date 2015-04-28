@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class Server extends UnicastRemoteObject implements ServerIF{
-	private static String serverName = "Server";
+	private static String serverName = "server1";
 	private static final long serialVersionUID = 1L;
 	// service to execute jobs
 	ExecutorService exec = Executors.newCachedThreadPool();
@@ -26,7 +26,13 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 		System.out.println("Server started\nEnter 'quit' to exit Server");
 		
 	}
-
+	public Server(String name) throws RemoteException{
+		super();
+		serverName = name;
+		new Shutdown(this,serverName).start();
+		System.out.println("Server: " + serverName + " succesfully bind!");
+	}
+	
 	@Override
 	public int addition(int first, int second) throws RemoteException {
 		return first+second;
