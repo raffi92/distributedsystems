@@ -16,4 +16,8 @@ public interface Dispatcher extends Remote{
 	
 	//choose random server
 	public Server randomServer() throws RemoteException;
+	
+	// job 
+	public Job<String> submit(Callable<String> job) throws RemoteException;
+	
 }

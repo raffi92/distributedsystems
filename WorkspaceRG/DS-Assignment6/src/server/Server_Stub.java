@@ -9,25 +9,13 @@ public final class Server_Stub
 {
     private static final long serialVersionUID = 2;
     
-    private static java.lang.reflect.Method $method_addition_0;
-    private static java.lang.reflect.Method $method_division_1;
-    private static java.lang.reflect.Method $method_factorail_2;
-    private static java.lang.reflect.Method $method_multiplication_3;
-    private static java.lang.reflect.Method $method_power_4;
-    private static java.lang.reflect.Method $method_square_5;
-    private static java.lang.reflect.Method $method_submit_6;
-    private static java.lang.reflect.Method $method_subtraction_7;
+    private static java.lang.reflect.Method $method_factorail_0;
+    private static java.lang.reflect.Method $method_submit_1;
     
     static {
 	try {
-	    $method_addition_0 = interfaces.ServerIF.class.getMethod("addition", new java.lang.Class[] {int.class, int.class});
-	    $method_division_1 = interfaces.ServerIF.class.getMethod("division", new java.lang.Class[] {int.class, int.class});
-	    $method_factorail_2 = interfaces.ServerIF.class.getMethod("factorail", new java.lang.Class[] {int.class});
-	    $method_multiplication_3 = interfaces.ServerIF.class.getMethod("multiplication", new java.lang.Class[] {int.class, int.class});
-	    $method_power_4 = interfaces.ServerIF.class.getMethod("power", new java.lang.Class[] {int.class, int.class});
-	    $method_square_5 = interfaces.ServerIF.class.getMethod("square", new java.lang.Class[] {int.class});
-	    $method_submit_6 = interfaces.ServerIF.class.getMethod("submit", new java.lang.Class[] {java.util.concurrent.Callable.class});
-	    $method_subtraction_7 = interfaces.ServerIF.class.getMethod("subtraction", new java.lang.Class[] {int.class, int.class});
+	    $method_factorail_0 = interfaces.ServerIF.class.getMethod("factorail", new java.lang.Class[] {int.class});
+	    $method_submit_1 = interfaces.ServerIF.class.getMethod("submit", new java.lang.Class[] {java.util.concurrent.Callable.class});
 	} catch (java.lang.NoSuchMethodException e) {
 	    throw new java.lang.NoSuchMethodError(
 		"stub class initialization failed");
@@ -41,92 +29,12 @@ public final class Server_Stub
     
     // methods from remote interfaces
     
-    // implementation of addition(int, int)
-    public int addition(int $param_int_1, int $param_int_2)
-	throws java.rmi.RemoteException
-    {
-	try {
-	    Object $result = ref.invoke(this, $method_addition_0, new java.lang.Object[] {new java.lang.Integer($param_int_1), new java.lang.Integer($param_int_2)}, 1202823392289180403L);
-	    return ((java.lang.Integer) $result).intValue();
-	} catch (java.lang.RuntimeException e) {
-	    throw e;
-	} catch (java.rmi.RemoteException e) {
-	    throw e;
-	} catch (java.lang.Exception e) {
-	    throw new java.rmi.UnexpectedException("undeclared checked exception", e);
-	}
-    }
-    
-    // implementation of division(int, int)
-    public int division(int $param_int_1, int $param_int_2)
-	throws java.rmi.RemoteException
-    {
-	try {
-	    Object $result = ref.invoke(this, $method_division_1, new java.lang.Object[] {new java.lang.Integer($param_int_1), new java.lang.Integer($param_int_2)}, -241006805769474406L);
-	    return ((java.lang.Integer) $result).intValue();
-	} catch (java.lang.RuntimeException e) {
-	    throw e;
-	} catch (java.rmi.RemoteException e) {
-	    throw e;
-	} catch (java.lang.Exception e) {
-	    throw new java.rmi.UnexpectedException("undeclared checked exception", e);
-	}
-    }
-    
     // implementation of factorail(int)
     public int factorail(int $param_int_1)
 	throws java.rmi.RemoteException
     {
 	try {
-	    Object $result = ref.invoke(this, $method_factorail_2, new java.lang.Object[] {new java.lang.Integer($param_int_1)}, 1776382836966014627L);
-	    return ((java.lang.Integer) $result).intValue();
-	} catch (java.lang.RuntimeException e) {
-	    throw e;
-	} catch (java.rmi.RemoteException e) {
-	    throw e;
-	} catch (java.lang.Exception e) {
-	    throw new java.rmi.UnexpectedException("undeclared checked exception", e);
-	}
-    }
-    
-    // implementation of multiplication(int, int)
-    public int multiplication(int $param_int_1, int $param_int_2)
-	throws java.rmi.RemoteException
-    {
-	try {
-	    Object $result = ref.invoke(this, $method_multiplication_3, new java.lang.Object[] {new java.lang.Integer($param_int_1), new java.lang.Integer($param_int_2)}, 7270617765412907410L);
-	    return ((java.lang.Integer) $result).intValue();
-	} catch (java.lang.RuntimeException e) {
-	    throw e;
-	} catch (java.rmi.RemoteException e) {
-	    throw e;
-	} catch (java.lang.Exception e) {
-	    throw new java.rmi.UnexpectedException("undeclared checked exception", e);
-	}
-    }
-    
-    // implementation of power(int, int)
-    public int power(int $param_int_1, int $param_int_2)
-	throws java.rmi.RemoteException
-    {
-	try {
-	    Object $result = ref.invoke(this, $method_power_4, new java.lang.Object[] {new java.lang.Integer($param_int_1), new java.lang.Integer($param_int_2)}, 108804793427937610L);
-	    return ((java.lang.Integer) $result).intValue();
-	} catch (java.lang.RuntimeException e) {
-	    throw e;
-	} catch (java.rmi.RemoteException e) {
-	    throw e;
-	} catch (java.lang.Exception e) {
-	    throw new java.rmi.UnexpectedException("undeclared checked exception", e);
-	}
-    }
-    
-    // implementation of square(int)
-    public int square(int $param_int_1)
-	throws java.rmi.RemoteException
-    {
-	try {
-	    Object $result = ref.invoke(this, $method_square_5, new java.lang.Object[] {new java.lang.Integer($param_int_1)}, -3081965826759790010L);
+	    Object $result = ref.invoke(this, $method_factorail_0, new java.lang.Object[] {new java.lang.Integer($param_int_1)}, 1776382836966014627L);
 	    return ((java.lang.Integer) $result).intValue();
 	} catch (java.lang.RuntimeException e) {
 	    throw e;
@@ -142,24 +50,8 @@ public final class Server_Stub
 	throws java.rmi.RemoteException
     {
 	try {
-	    Object $result = ref.invoke(this, $method_submit_6, new java.lang.Object[] {$param_Callable_1}, -355272494584837891L);
+	    Object $result = ref.invoke(this, $method_submit_1, new java.lang.Object[] {$param_Callable_1}, -355272494584837891L);
 	    return ((interfaces.Job) $result);
-	} catch (java.lang.RuntimeException e) {
-	    throw e;
-	} catch (java.rmi.RemoteException e) {
-	    throw e;
-	} catch (java.lang.Exception e) {
-	    throw new java.rmi.UnexpectedException("undeclared checked exception", e);
-	}
-    }
-    
-    // implementation of subtraction(int, int)
-    public int subtraction(int $param_int_1, int $param_int_2)
-	throws java.rmi.RemoteException
-    {
-	try {
-	    Object $result = ref.invoke(this, $method_subtraction_7, new java.lang.Object[] {new java.lang.Integer($param_int_1), new java.lang.Integer($param_int_2)}, -9032374515124302023L);
-	    return ((java.lang.Integer) $result).intValue();
 	} catch (java.lang.RuntimeException e) {
 	    throw e;
 	} catch (java.rmi.RemoteException e) {

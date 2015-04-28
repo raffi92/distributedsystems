@@ -42,7 +42,7 @@ public class Shutdown extends Thread{
 					}
 					
 					// unregister all Jobs
-					ArrayList<Job<String>> tmp = Server.openResults;
+					ArrayList<Job<String>> tmp = server.openResults;
 					for (Job<String> t : tmp){
 						try {
 							UnicastRemoteObject.unexportObject(t, true);

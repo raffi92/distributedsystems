@@ -22,23 +22,22 @@ public class ResultChecker implements Runnable{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			ArrayList<Future<String>> tmp = Server.openFuture;
+			ArrayList<Future<String>> tmp = server.openFuture;
 			for(int i = 0; i < tmp.size(); i++){
 				if (tmp.get(i).isDone()){
-					JobImpl<String> job = (JobImpl<String>) Server.openResults.get(i);
+					JobImpl<String> job = (JobImpl<String>) server.openResults.get(i);
 					if (job.deliverd()){
 						try {
 							UnicastRemoteObject.unexportObject(job, true);
 						} catch (NoSuchObjectException e) {
 							e.printStackTrace();
 						}
-						Server.openResults.remove(i);
-						Server.openFuture.remove(i);
-						System.out.println("removed");
+						server.openResults.remove(i);
+						server.openFuture.remove(i);
 					} else {
 						try {
 							// set result if future is finished
-							job.setResult(tmp.get(i).get());
+							job.setResult("result from " + server.getName() + ":" + tmp.get(i).get());
 						} catch (InterruptedException | ExecutionException e) {
 							e.printStackTrace();
 						}

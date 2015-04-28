@@ -1,32 +1,32 @@
-package dispatcher;
+package dispatcherEx02;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.RemoteObject;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.Callable;
-
 import server.Server;
 import interfaces.Dispatcher;
+import interfaces.Job;
 
-//TODO client calls dispatcher
 //TODO adapt all operations or delete them (except Fibonacci)
 //TODO c) theory question
 //TODO single server shutdown by name?
 
-public class DispatcherImpl implements Dispatcher{
+public class DispatcherImpl extends UnicastRemoteObject implements Dispatcher{
+	private static final long serialVersionUID = 1L;
+
+	protected DispatcherImpl() throws RemoteException {
+		super();
+	}
+
 	private LinkedList<Server> serverList = new LinkedList<Server>();
 	private Random random = new Random();
-	private static Dispatcher dispatch;
 	
-	public DispatcherImpl(){
-		testDispatcher();
-	}
 	@Override
 	public void register(Server server) throws RemoteException {
 		if(!serverList.contains(server)){
@@ -55,30 +55,31 @@ public class DispatcherImpl implements Dispatcher{
 			 return serverList.get(random.nextInt(serverList.size()));	
 	}
 	
-	public String submit(Callable<String> job) throws RemoteException{
+	public Job<String> submit(Callable<String> job) throws RemoteException{
 		Server currentServer = randomServer();
 		return currentServer.submit(job);
 	}
 	
-	public void testDispatcher(){
-		String sOne = "server1";
+	public static void testDispatcher(){
+		Dispatcher dispatcher = null;
+		try {
+			dispatcher = new DispatcherImpl();
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		}
+		final String sOne = "server1";
 		String sTwo = "server2";
 		String sThree = "server3";
 		try {
 			LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-//			Naming.rebind(sOne, new Server (sOne));
-//			Naming.rebind(sTwo, new Server(sTwo));
-//			Naming.rebind(sThree, new Server(sThree));
+			Naming.rebind("Dispatcher", dispatcher);
 			Server serv1 = new Server(sOne);
 			Server serv2 = new Server(sTwo);
 			Server serv3 = new Server(sThree);
-//			final Server obj1 = (Server) UnicastRemoteObject.exportObject(serv1, 0);
-//			final Server obj2 = (Server) UnicastRemoteObject.exportObject(serv2,0);
-//			final Server obj3 = (Server) UnicastRemoteObject.exportObject(serv3, 0);
-			register(serv1);
-			register(serv2);
-			register(serv3);
-		} catch (RemoteException e) {
+			dispatcher.register(serv1);
+			dispatcher.register(serv2);
+			dispatcher.register(serv3);
+		} catch (RemoteException | MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -88,8 +89,7 @@ public class DispatcherImpl implements Dispatcher{
 	 * @param args
 	 */
 	public static void main(String[] args){
-		new DispatcherImpl();
-		
+		testDispatcher();
 	}
 
 }

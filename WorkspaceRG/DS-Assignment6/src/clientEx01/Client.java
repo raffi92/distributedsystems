@@ -1,4 +1,4 @@
-package client;
+package clientEx01;
 
 import interfaces.Job;
 import interfaces.ServerIF;
@@ -17,7 +17,6 @@ public class Client implements Remote{
 	private static String url = "//127.0.0.1/Server";
 	private Scanner input;
 	private int first;
-	private int second;
 	private String operation;
 	private int result;
 	private boolean running;
@@ -29,7 +28,7 @@ public class Client implements Remote{
 		int scanned = -1;
 		while (running) {
 			System.out
-					.println("Please enter your Operation:\n0...Exit\n1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n5...Division\n6...Square\n7...Power\n8...Submit Job\n9...Submit Job 2\n");
+					.println("Please enter your Operation:\n0...Exit1...Factorial\n2...Submit Job(fib 10)\n3...Submit Job (fib dynamic)\n");
 			while (!input.hasNextInt()){
 				input.next();	// waste if input is string
 				System.out.println("Enter the number of your operation");
@@ -37,54 +36,18 @@ public class Client implements Remote{
 			scanned = input.nextInt();
 			switch (scanned) {
 			case 1:
-				operation = "Addition";
-				enterNumbers();
-				result = server.addition(first, second);
-				printResult();
-				break;
-			case 2:
-				operation = "Substraction";
-				enterNumbers();
-				result = server.subtraction(first, second);
-				printResult();
-				break;
-			case 3:
-				operation = "Multiplication";
-				enterNumbers();
-				result = server.multiplication(first, second);
-				printResult();
-				break;
-			case 4:
 				operation = "Factorial";
 				enterNumber();
 				result = server.factorail(first);
 				printResult();
 				break;
-			case 5:
-				operation = "Division";
-				enterNumbers();
-				result = server.division(first, second);
-				printResult();
-				break;
-			case 6:
-				operation = "Square";
-				enterNumber();
-				result = server.square(first);
-				printResult();
-				break;
-			case 7:
-				operation = "Power";
-				enterNumbers();
-				result = server.power(first, second);
-				printResult();
-				break;
-			case 8:
+			case 2:
 				Callable<String> job = new CallableImpl();
 				System.out.println(("Input: " + ((CallableImpl) job).getFib()));
 				Job<String> jobDone = server.submit(job);
 				new Thread(new PollingService(jobDone, this)).start();
 				break;
-			case 9: 
+			case 3: 
 				Callable<String> job1 = new CallableImpl();
 				System.out.println("Enter input number: ");
 				int nr = input.nextInt();
@@ -102,13 +65,6 @@ public class Client implements Remote{
 				break;
 			}
 		}
-	}
-
-	public void enterNumbers() {
-		System.out.println("Please enter your first number!\n");
-		first = input.nextInt();
-		System.out.println("Please enter your second number!\n");
-		second = input.nextInt();
 	}
 
 	public void enterNumber() {

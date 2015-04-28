@@ -13,17 +13,18 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
+// TODO limit number of clients (jobs)
 public class Server extends UnicastRemoteObject implements ServerIF{
-	private static String serverName = "Server";
+	private String serverName = "Server";
 	private static final long serialVersionUID = 1L;
-	static ArrayList<Job<String>> openResults = new ArrayList<>();
-	static ArrayList<Future<String>> openFuture = new ArrayList<>();
+	ArrayList<Job<String>> openResults = new ArrayList<>();
+	ArrayList<Future<String>> openFuture = new ArrayList<>();
+	// service to execute jobs
 	static ExecutorService exec = Executors.newCachedThreadPool();
 //	private int maxNumOfClients = 5;
 //	private int activeClients = 0;
 	protected boolean running = true;
-	// service to execute jobs
+	
 	
 	
 	public Server() throws RemoteException {
@@ -32,23 +33,14 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 		new Shutdown(this, serverName).start();
 		System.out.println("Server started\nEnter 'quit' to exit Server");
 		new Thread(new ResultChecker(this)).start();
-		
-		
 	}
-
-	@Override
-	public int addition(int first, int second) throws RemoteException {
-		return first+second;
-	}
-
-	@Override
-	public int subtraction(int first, int second) throws RemoteException {
-		return first-second;
-	}
-
-	@Override
-	public int multiplication(int first, int second) throws RemoteException {
-		return first*second;
+	
+	public Server(String name) throws RemoteException {
+			super();
+			serverName = name;
+			// shutdown service
+			new Shutdown(this, serverName).start();
+			new Thread(new ResultChecker(this)).start();
 	}
 
 	@Override
@@ -59,22 +51,6 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 		}
 		return fact;
 	}
-
-	@Override
-	public int division(int first, int second) throws RemoteException {
-		return (first / second);
-	}
-
-	@Override
-	public int square(int first) throws RemoteException {
-		return first * first;
-	}
-
-	@Override
-	public int power(int first, int second) throws RemoteException {
-		return (int) java.lang.Math.pow(first,second);
-	}
-
 
 	/** instead of manuell command rmiregistry in the console 
 	 * registration in main method
@@ -88,13 +64,16 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	    catch (RemoteException ex) {
 	      System.out.println(ex.getMessage());
 	    }
+	    Server s = null;
+		try {
+			s = new Server();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	    try {
-	      Naming.rebind(serverName, new Server());
+	      Naming.rebind(s.serverName, s);
 	    }
-	    catch (MalformedURLException ex) {
-	      System.out.println(ex.getMessage());
-	    }
-	    catch (RemoteException ex) {
+	    catch (MalformedURLException | RemoteException ex) {
 	      System.out.println(ex.getMessage());
 	    }
 	  }
@@ -115,6 +94,10 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	
 	protected Job<String> getJob(int index){
 		return openResults.get(index);
+	}
+	
+	public String getName(){
+		return serverName;
 	}
 	
 	
