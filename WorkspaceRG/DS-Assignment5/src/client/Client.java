@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
 
@@ -28,10 +29,17 @@ public class Client {
 	public Client() throws RemoteException {
 		input = new Scanner(System.in);
 		running = true;
+		int scanned = -1;
 		while (running) {
 			System.out
 					.println("Please enter your Operation:\n0...Exit\n1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n5...Division\n6...Square\n7...Power\n8...DeepThought");
-			switch (input.nextInt()) {
+			//switch (input.nextInt()) {
+			while (!input.hasNextInt()){
+				input.next();	// waste if input is string
+				System.out.println("Enter the number of your operation");
+			}
+			scanned = input.nextInt();
+			switch (scanned) {
 			case 1:
 				operation = "Addition";
 				enterNumbers();
@@ -83,6 +91,9 @@ public class Client {
 			case 0:
 				System.out.println("Client shutdown...");
 				running = false;
+				input.close();
+				// remove callback from rmi runtime
+				//UnicastRemoteObject.unexportObject(callback, true);
 				break;
 			default:
 				System.out.println("Please try again!");

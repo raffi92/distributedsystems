@@ -9,7 +9,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-// TODO mehrere Clients gleichzeitig?? - Server extends Thread or implements runnable
+
 // TODO quit server??
 public class Server extends UnicastRemoteObject implements ServerIF{
 
@@ -71,6 +71,8 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 				}
 			}
 		}).start();
+
+		Thread.currentThread().interrupt();
 		return null;
 	}
 
@@ -78,11 +80,11 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	public String runDeepThought() throws RemoteException {
 		call.getState("Starting DeepThought...");
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(5000);
 			call.getState("Still running...");
-			Thread.sleep(3000);
+			Thread.sleep(5000);
 			call.getState("Please be patient, still running...");
-			Thread.sleep(2000);
+			Thread.sleep(5000);
 			call.finish(42);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -90,6 +92,9 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 		return null;
 	}
 
+//	public void terminate(){
+//		Thread.currentThread().interrupt();
+//	}
 	/** instead of manuell command rmiregistry in the console 
 	 * registration in main method
 	 */
