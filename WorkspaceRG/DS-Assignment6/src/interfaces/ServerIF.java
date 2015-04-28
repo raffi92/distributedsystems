@@ -2,6 +2,7 @@ package interfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
 
 public interface ServerIF extends Remote{
@@ -26,10 +27,7 @@ public interface ServerIF extends Remote{
 	// factorial
 	public int factorail(int bound) throws RemoteException;
 	
-	// deep thought
-	public String deepThought(CallbackIF callback) throws RemoteException;
-	
-	// run deep thought
-	public String runDeepThought() throws RemoteException;
+	// job 
+	public String submit(Callable<String> job) throws RemoteException;
 	
 }

@@ -1,17 +1,20 @@
 package client;
 
-import interfaces.CallbackIF;
 import interfaces.ServerIF;
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 
-
-public class Client {
+// TODO client should be asynch
+// TODO client should pull or push result
+public class Client implements Remote{
+	/**
+	 * 
+	 */
 	private static ServerIF server;
 	private static String url = "//127.0.0.1/Server";
 	private Scanner input;
@@ -20,19 +23,15 @@ public class Client {
 	private String operation;
 	private int result;
 	private boolean running;
-	public CallbackIF callback;
 	
 	public Client() throws RemoteException {
+		
 		input = new Scanner(System.in);
 		running = true;
 		int scanned = -1;
 		while (running) {
 			System.out
-					.println("Please enter your Operation:\n0...Exit\n1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n5...Division\n6...Square\n7...Power\n8...DeepThought");
-<<<<<<< HEAD
-			//switch (input.nextInt()) {
-=======
->>>>>>> ce6d89ae107cec917484df5c8fd1030378458274
+					.println("Please enter your Operation:\n0...Exit\n1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n5...Division\n6...Square\n7...Power\n8...Submit Job\n");
 			while (!input.hasNextInt()){
 				input.next();	// waste if input is string
 				System.out.println("Enter the number of your operation");
@@ -81,23 +80,18 @@ public class Client {
 				result = server.power(first, second);
 				printResult();
 				break;
-			case 8:				
-				operation = "DeepThought";
-				String question = enterQuestion();
-				callback = new Callback(question);
-				
-				server.deepThought(callback);
+			case 8:
+				Callable<String> job = new CallableImpl();
+				System.out.println(((CallableImpl) job).getFib());
+				// TODO return instance of Job
+				String jobDone = server.submit(job);
+				//jobDone.isDone();
+				System.out.println(jobDone);
 				break;
 			case 0:
 				System.out.println("Client shutdown...");
 				running = false;
 				input.close();
-				// remove callback from rmi runtime
-<<<<<<< HEAD
-				//UnicastRemoteObject.unexportObject(callback, true);
-=======
-				UnicastRemoteObject.unexportObject(callback, true);
->>>>>>> ce6d89ae107cec917484df5c8fd1030378458274
 				break;
 			default:
 				System.out.println("Please try again!");
@@ -126,6 +120,13 @@ public class Client {
 	public void printResult() {
 		System.out.println("The Result of the Operation " + operation + " is "
 				+ result + "\n\n\n");
+	}
+	
+	public static int Fibonacci(int n){
+	    if (n <= 1)
+	        return n;
+	    else
+	        return Fibonacci(n - 1) + Fibonacci(n - 2);
 	}
 
 	public static void main(String[] args) {
