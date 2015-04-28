@@ -1,5 +1,6 @@
 package server;
 
+import interfaces.Job;
 import interfaces.ServerIF;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -7,8 +8,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -16,14 +17,22 @@ import java.util.concurrent.Future;
 public class Server extends UnicastRemoteObject implements ServerIF{
 	private static String serverName = "Server";
 	private static final long serialVersionUID = 1L;
+	static ArrayList<Job<String>> openResults = new ArrayList<>();
+	static ArrayList<Future<String>> openFuture = new ArrayList<>();
+	static ExecutorService exec = Executors.newCachedThreadPool();
+//	private int maxNumOfClients = 5;
+//	private int activeClients = 0;
+	protected boolean running = true;
 	// service to execute jobs
-	ExecutorService exec = Executors.newCachedThreadPool();
 	
-	protected Server() throws RemoteException {
+	
+	public Server() throws RemoteException {
 		super();
 		// shutdown service
 		new Shutdown(this, serverName).start();
 		System.out.println("Server started\nEnter 'quit' to exit Server");
+		new Thread(new ResultChecker(this)).start();
+		
 		
 	}
 
@@ -91,20 +100,24 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	  }
 
 	@Override
-	// TODO change return type, also in interface
-	public String submit(Callable<String> job) throws RemoteException {
+	public Job<String> submit(Callable<String> job) throws RemoteException {
+//		activeClients++;
 		Future<String> res = exec.submit(job);
-		String resu = null;
-		try {
-			resu = res.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-		//Job<T> ret = new JobImpl(resu);
-		
-		return "result from server: " + resu;
+		Job<String> ret = new JobImpl<String>();
+		openFuture.add(res);
+		openResults.add(ret);
+		return ret;
 	}
+	
+	protected ArrayList<Future<String>> getFutureList() {
+		return openFuture;
+	}
+	
+	protected Job<String> getJob(int index){
+		return openResults.get(index);
+	}
+	
+	
 
 }
+

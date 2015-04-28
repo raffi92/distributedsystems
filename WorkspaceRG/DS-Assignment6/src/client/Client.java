@@ -1,5 +1,6 @@
 package client;
 
+import interfaces.Job;
 import interfaces.ServerIF;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -10,11 +11,8 @@ import java.util.Scanner;
 import java.util.concurrent.Callable;
 
 // TODO client should be asynch
-// TODO client should pull or push result
+// TODO polling service
 public class Client implements Remote{
-	/**
-	 * 
-	 */
 	private static ServerIF server;
 	private static String url = "//127.0.0.1/Server";
 	private Scanner input;
@@ -31,7 +29,7 @@ public class Client implements Remote{
 		int scanned = -1;
 		while (running) {
 			System.out
-					.println("Please enter your Operation:\n0...Exit\n1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n5...Division\n6...Square\n7...Power\n8...Submit Job\n");
+					.println("Please enter your Operation:\n0...Exit\n1...Addition\n2...Subtraction\n3...Multiplication\n4...Factorial\n5...Division\n6...Square\n7...Power\n8...Submit Job\n9...Submit Job 2\n");
 			while (!input.hasNextInt()){
 				input.next();	// waste if input is string
 				System.out.println("Enter the number of your operation");
@@ -82,9 +80,17 @@ public class Client implements Remote{
 				break;
 			case 8:
 				Callable<String> job = new CallableImpl();
-				System.out.println(((CallableImpl) job).getFib());
-				String jobDone = server.submit(job);
-				System.out.println(jobDone);
+				System.out.println(("Input: " + ((CallableImpl) job).getFib()));
+				Job<String> jobDone = server.submit(job);
+				new Thread(new PollingService(jobDone, this)).start();
+				break;
+			case 9: 
+				Callable<String> job1 = new CallableImpl();
+				System.out.println("Enter input number: ");
+				int nr = input.nextInt();
+				((CallableImpl) job1).setFib(nr);
+				Job<String> jobDone1 = server.submit(job1);
+				new Thread(new PollingService(jobDone1, this)).start();
 				break;
 			case 0:
 				System.out.println("Client shutdown...");
@@ -120,6 +126,10 @@ public class Client implements Remote{
 				+ result + "\n\n\n");
 	}
 	
+	public void deliverResult(String result2) {
+		System.out.println(result2);
+	}
+	
 	public static int Fibonacci(int n){
 	    if (n <= 1)
 	        return n;
@@ -135,5 +145,4 @@ public class Client implements Remote{
 			e.printStackTrace();
 		}
 	}
-
 }

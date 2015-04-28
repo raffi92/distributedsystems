@@ -1,16 +1,18 @@
 package server;
 
+import interfaces.Job;
+
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Shutdown extends Thread{
 	Scanner input;
-	Boolean running = true;
 	Server server = null;
 	String name;
 	
@@ -21,9 +23,9 @@ public class Shutdown extends Thread{
 	
 	public void run() {
 		input = new Scanner(System.in);
-		while(running){
-			
-			if(input.next().equals("quit")){
+		while(server.running){
+			String option = input.next();
+			if(option.equals("quit") || option.equals("0")){
 					// unregister
 					try {
 						Naming.unbind(name);
@@ -31,16 +33,29 @@ public class Shutdown extends Thread{
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					running = false;
-					// remove from Rmi runtime
+					server.running = false;
+					// remove server from Rmi runtime
 					try {
 						UnicastRemoteObject.unexportObject(server, true);
 					} catch (NoSuchObjectException e) {
 						e.printStackTrace();
 					}
-
+					
+					// unregister all Jobs
+					ArrayList<Job<String>> tmp = Server.openResults;
+					for (Job<String> t : tmp){
+						try {
+							UnicastRemoteObject.unexportObject(t, true);
+						} catch (NoSuchObjectException e) {
+							e.printStackTrace();
+						}
+					}
+					// quit executor service
+					Server.exec.shutdown();
+					
 			}
 		}
 		input.close();
+		System.out.println("shutdown");
 	}
 }

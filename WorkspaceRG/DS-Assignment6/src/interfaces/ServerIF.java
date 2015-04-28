@@ -28,6 +28,6 @@ public interface ServerIF extends Remote{
 	public int factorail(int bound) throws RemoteException;
 	
 	// job 
-	public String submit(Callable<String> job) throws RemoteException;
+	public Job<String> submit(Callable<String> job) throws RemoteException;
 	
 }

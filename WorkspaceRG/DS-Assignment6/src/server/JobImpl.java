@@ -1,17 +1,23 @@
 package server;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
 import interfaces.Job;
 
 
 
-public class JobImpl<T> implements Job<T>{
+public class JobImpl<T> extends UnicastRemoteObject implements Job<T>, Serializable{
+	protected JobImpl() throws RemoteException {
+		super();
+	}
+
+	private static final long serialVersionUID = 1L;
 	private T res;
 	private boolean done = false;
-	public JobImpl(T res) throws RemoteException{
-		this.res = res;
-		done = true;
-	}
+	private boolean delivered = false;
+	
 	@Override
 	public boolean isDone() {
 		return done;
@@ -19,7 +25,17 @@ public class JobImpl<T> implements Job<T>{
 
 	@Override
 	public T getResult() {
+		delivered = true;
 		return res;
 	}
-
+	
+	public void setResult(T res){
+		this.res = res;
+		done = true;
+	}
+	
+	public boolean deliverd(){
+		return delivered;
+	}
+	
 }
