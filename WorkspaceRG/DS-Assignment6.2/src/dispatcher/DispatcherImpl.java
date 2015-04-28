@@ -8,6 +8,12 @@ import java.util.concurrent.Callable;
 import server.Server;
 import interfaces.Dispatcher;
 
+//TODO register Servers in DispatcherImpl
+//TODO registry/main for dispatcher
+//TODO client calls dispatcher
+//TODO adapt all operations or delete them (except Fibonacci)
+//TODO c) theory question
+
 public class DispatcherImpl implements Dispatcher{
 	private LinkedList<Server> serverList = new LinkedList<Server>();
 	private Random random = new Random();
