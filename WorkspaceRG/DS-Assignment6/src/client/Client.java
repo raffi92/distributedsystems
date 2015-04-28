@@ -83,9 +83,7 @@ public class Client implements Remote{
 			case 8:
 				Callable<String> job = new CallableImpl();
 				System.out.println(((CallableImpl) job).getFib());
-				// TODO return instance of Job
 				String jobDone = server.submit(job);
-				//jobDone.isDone();
 				System.out.println(jobDone);
 				break;
 			case 0:

@@ -91,7 +91,6 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	  }
 
 	@Override
-	// TODO change return type, also in interface
 	public String submit(Callable<String> job) throws RemoteException {
 		Future<String> res = exec.submit(job);
 		String resu = null;
