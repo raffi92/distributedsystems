@@ -9,15 +9,14 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.Callable;
+
 import server.Server;
 import interfaces.Dispatcher;
 import interfaces.Job;
 
-//TODO direct delivery of result without dispatcher
-//TODO c) theory question
-
 public class DispatcherImpl extends UnicastRemoteObject implements Dispatcher{
 	private static final long serialVersionUID = 1L;
+	protected boolean running = true;
 
 	protected DispatcherImpl() throws RemoteException {
 		super();
@@ -62,17 +61,15 @@ public class DispatcherImpl extends UnicastRemoteObject implements Dispatcher{
 			currentServer = randomServer();
 			tmp = currentServer.submit(job);
 		}
-		return currentServer.submit(job);
+		return tmp;
 	}
 	
-	public static void testDispatcher(){
-		Dispatcher dispatcher = null;
-		try {
-			dispatcher = new DispatcherImpl();
-		} catch (RemoteException e1) {
-			e1.printStackTrace();
-		}
-		final String sOne = "server1";
+	public LinkedList<Server> getServerList(){
+		return serverList;
+	}
+	
+	public static void testDispatcher(Dispatcher dispatcher){
+		String sOne = "server1";
 		String sTwo = "server2";
 		String sThree = "server3";
 		try {
@@ -94,7 +91,18 @@ public class DispatcherImpl extends UnicastRemoteObject implements Dispatcher{
 	 * @param args
 	 */
 	public static void main(String[] args){
-		testDispatcher();
+		Dispatcher dispatcher = null;
+		try {
+			dispatcher = new DispatcherImpl();
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		}
+		testDispatcher(dispatcher);
+		new ShutdownDispatcher(dispatcher).start();
 	}
-
+	
+	public boolean isRunning(){
+		return running;
+	}
 }
+

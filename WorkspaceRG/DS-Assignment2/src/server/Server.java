@@ -80,17 +80,4 @@ public class Server {
 		}
 	}
 
-//	private static class CloseListener extends Thread {
-//		public void run() {
-//			Scanner input = new Scanner(System.in);
-//			input.next().equals("quit");
-//			try {
-//				server.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			input.close();
-//		}
-//	}
 }

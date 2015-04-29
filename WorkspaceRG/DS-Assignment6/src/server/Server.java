@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
 public class Server extends UnicastRemoteObject implements ServerIF{
 	private String serverName = "Server";
 	private static final long serialVersionUID = 1L;
-	ArrayList<Job<String>> openResults = new ArrayList<>();
+	public ArrayList<Job<String>> openResults = new ArrayList<>();
 	ArrayList<Future<String>> openFuture = new ArrayList<>();
 	// service to execute jobs
 	static ExecutorService exec = Executors.newCachedThreadPool();
@@ -34,12 +34,10 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 		System.out.println("Server started\nEnter 'quit' to exit Server");
 		new Thread(new ResultChecker(this)).start();
 	}
-	
+	// constructor for dispatcher
 	public Server(String name) throws RemoteException {
 			super();
 			serverName = name;
-			// shutdown service
-			new Shutdown(this, serverName).start();
 			new Thread(new ResultChecker(this)).start();
 	}
 
@@ -106,6 +104,10 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	
 	public String getName(){
 		return serverName;
+	}
+	
+	public ExecutorService getExec(){
+		return exec;
 	}
 	
 	
