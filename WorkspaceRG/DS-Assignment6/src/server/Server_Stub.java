@@ -9,13 +9,11 @@ public final class Server_Stub
 {
     private static final long serialVersionUID = 2;
     
-    private static java.lang.reflect.Method $method_factorail_0;
-    private static java.lang.reflect.Method $method_submit_1;
+    private static java.lang.reflect.Method $method_submit_0;
     
     static {
 	try {
-	    $method_factorail_0 = interfaces.ServerIF.class.getMethod("factorail", new java.lang.Class[] {int.class});
-	    $method_submit_1 = interfaces.ServerIF.class.getMethod("submit", new java.lang.Class[] {java.util.concurrent.Callable.class});
+	    $method_submit_0 = interfaces.ServerIF.class.getMethod("submit", new java.lang.Class[] {java.util.concurrent.Callable.class});
 	} catch (java.lang.NoSuchMethodException e) {
 	    throw new java.lang.NoSuchMethodError(
 		"stub class initialization failed");
@@ -29,28 +27,12 @@ public final class Server_Stub
     
     // methods from remote interfaces
     
-    // implementation of factorail(int)
-    public int factorail(int $param_int_1)
-	throws java.rmi.RemoteException
-    {
-	try {
-	    Object $result = ref.invoke(this, $method_factorail_0, new java.lang.Object[] {new java.lang.Integer($param_int_1)}, 1776382836966014627L);
-	    return ((java.lang.Integer) $result).intValue();
-	} catch (java.lang.RuntimeException e) {
-	    throw e;
-	} catch (java.rmi.RemoteException e) {
-	    throw e;
-	} catch (java.lang.Exception e) {
-	    throw new java.rmi.UnexpectedException("undeclared checked exception", e);
-	}
-    }
-    
     // implementation of submit(Callable)
     public interfaces.Job submit(java.util.concurrent.Callable $param_Callable_1)
 	throws java.rmi.RemoteException
     {
 	try {
-	    Object $result = ref.invoke(this, $method_submit_1, new java.lang.Object[] {$param_Callable_1}, -355272494584837891L);
+	    Object $result = ref.invoke(this, $method_submit_0, new java.lang.Object[] {$param_Callable_1}, -355272494584837891L);
 	    return ((interfaces.Job) $result);
 	} catch (java.lang.RuntimeException e) {
 	    throw e;

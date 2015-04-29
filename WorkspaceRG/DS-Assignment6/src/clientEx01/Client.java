@@ -14,8 +14,6 @@ public class Client implements Remote{
 	private static ServerIF server;
 	private static String url = "//127.0.0.1/Server";
 	private Scanner input;
-	private int first;
-	private String operation;
 	private boolean running;
 	
 	public Client() throws RemoteException {
@@ -25,7 +23,7 @@ public class Client implements Remote{
 		int scanned = -1;
 		while (running) {
 			System.out
-					.println("Please enter your Operation:\n0...Exit\n1...Factorial\n2...Submit Job(fib 10)\n3...Submit Job (fib dynamic)\n");
+					.println("Please enter your Operation:\n0...Exit\n1...Submit Job(fib 10)\n2...Submit Job (fib custom)\n");
 			while (!input.hasNextInt()){
 				input.next();	// waste if input is string
 				System.out.println("Enter the number of your operation");
@@ -33,12 +31,6 @@ public class Client implements Remote{
 			scanned = input.nextInt();
 			switch (scanned) {
 			case 1:
-				operation = "Factorial";
-				enterNumber();
-				int result = server.factorail(first);
-				printResult(result);
-				break;
-			case 2:
 				Callable<String> job = new CallableImpl();
 				System.out.println(("Input: " + ((CallableImpl) job).getFib()));
 				Job<String> jobDone = server.submit(job);
@@ -48,9 +40,8 @@ public class Client implements Remote{
 				} else {
 					System.out.println("Job refused");
 				}
-					
 				break;
-			case 3: 
+			case 2: 
 				Callable<String> job1 = new CallableImpl();
 				System.out.println("Enter input number: ");
 				int nr = input.nextInt();
@@ -70,19 +61,10 @@ public class Client implements Remote{
 		}
 	}
 
-	public void enterNumber() {
-		System.out.println("Please enter your number!\n");
-		first = input.nextInt();
-	}
-
 	public String enterQuestion(){
 		System.out.println("Please enter your question!\n");
 		String input = this.input.next();
 		return input;
-	}
-	public void printResult(int result) {
-		System.out.println("The Result of the Operation " + operation + " is "
-				+ result + "\n\n\n");
 	}
 	
 	public void printResult(String result2) {

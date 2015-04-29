@@ -41,15 +41,6 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 			new Thread(new ResultChecker(this)).start();
 	}
 
-	@Override
-	public int factorail(int bound) throws RemoteException {
-		int fact = 1;
-		for (int i = 1; i <= bound; i++) {
-			fact *= i;
-		}
-		return fact;
-	}
-
 	/** instead of manuell command rmiregistry in the console 
 	 * registration in main method
 	 */
@@ -79,9 +70,10 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	@Override
 	public Job<String> submit(Callable<String> job) throws RemoteException {
 		activeJobs++;
-		System.out.println("Jobs active: " + activeJobs);
+		System.out.println(getName() + ": Jobs active: " + activeJobs);
 		if (activeJobs > maxNumOfJobs){
 			activeJobs--;
+			System.out.println(getName() + ": Jobs active: " + activeJobs);
 			return null;
 		}
 		else {
@@ -108,6 +100,10 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	
 	public ExecutorService getExec(){
 		return exec;
+	}
+	
+	public void closeServer(){
+		running = false;
 	}
 	
 	

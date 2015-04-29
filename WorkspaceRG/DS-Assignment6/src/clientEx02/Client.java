@@ -29,7 +29,7 @@ public class Client implements Remote{
 		int scanned = -1;
 		while (running) {
 			System.out
-					.println("Please enter your Operation:\n0...Exit\n1...Submit Job\n2...Submit Job 2\n");
+					.println("Please enter your Operation:\n0...Exit\n1...Submit Job (fib 10)\n2...Submit Job (fib custom)\n");
 			while (!input.hasNextInt()){
 				input.next();	// waste if input is string
 				System.out.println("Enter the number of your operation");

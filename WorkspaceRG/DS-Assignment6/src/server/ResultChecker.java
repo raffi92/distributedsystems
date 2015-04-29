@@ -1,7 +1,5 @@
 package server;
 
-import interfaces.Job;
-
 import java.rmi.NoSuchObjectException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -21,7 +19,6 @@ public class ResultChecker implements Runnable{
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			ArrayList<Future<String>> tmp = server.openFuture;
@@ -34,14 +31,15 @@ public class ResultChecker implements Runnable{
 						} catch (NoSuchObjectException e) {
 							e.printStackTrace();
 						}
-						server.activeJobs--;
+						
 						server.openResults.remove(i);
 						server.openFuture.remove(i);
 					} else {
 						try {
 							// set result if future is finished
-							System.out.println("Jobs active: " + server.activeJobs);
-							job.setResult("result from " + server.getName() + ":" + tmp.get(i).get());
+							server.activeJobs--;
+							System.out.println(server.getName() + ": Jobs active: " + server.activeJobs);
+							job.setResult("result from " + server.getName() + ": " + tmp.get(i).get());
 						} catch (InterruptedException | ExecutionException e) {
 							e.printStackTrace();
 						}

@@ -69,6 +69,7 @@ public class DispatcherImpl extends UnicastRemoteObject implements Dispatcher{
 	}
 	
 	public static void testDispatcher(Dispatcher dispatcher){
+		System.out.println("DISPATCHER STARTED");
 		String sOne = "server1";
 		String sTwo = "server2";
 		String sThree = "server3";

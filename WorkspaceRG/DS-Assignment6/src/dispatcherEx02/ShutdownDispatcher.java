@@ -1,15 +1,12 @@
 package dispatcherEx02;
 
 import interfaces.Dispatcher;
-import interfaces.Job;
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -22,6 +19,7 @@ public class ShutdownDispatcher extends Thread{
 		this.dis = (DispatcherImpl) dis;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void run() {
 		Scanner input = new Scanner(System.in);
 		while(dis.isRunning()){
@@ -35,12 +33,13 @@ public class ShutdownDispatcher extends Thread{
 					} catch (RemoteException e3) {
 						e3.printStackTrace();
 					}
+					// quit Threads of Server
+					s.closeServer();
 					
 					// remove server from Rmi runtime
 					try {
 						UnicastRemoteObject.unexportObject(s, true);
 					} catch (NoSuchObjectException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					s.getExec().shutdownNow();
@@ -50,7 +49,6 @@ public class ShutdownDispatcher extends Thread{
 				try {
 					Naming.unbind("Dispatcher");
 				} catch (RemoteException | MalformedURLException | NotBoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
@@ -64,6 +62,6 @@ public class ShutdownDispatcher extends Thread{
 			}
 		}
 		input.close();
-		System.out.println("shutdown");
+		System.out.println("DISPATCHER shutdown");
 	}
 }
