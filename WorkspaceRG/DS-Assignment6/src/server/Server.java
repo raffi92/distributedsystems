@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-// TODO limit number of clients (jobs)
+
 public class Server extends UnicastRemoteObject implements ServerIF{
 	private String serverName = "Server";
 	private static final long serialVersionUID = 1L;
@@ -21,8 +21,8 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	ArrayList<Future<String>> openFuture = new ArrayList<>();
 	// service to execute jobs
 	static ExecutorService exec = Executors.newCachedThreadPool();
-//	private int maxNumOfClients = 5;
-//	private int activeClients = 0;
+	protected int maxNumOfJobs = 5;
+	protected int activeJobs = 0;
 	protected boolean running = true;
 	
 	
@@ -80,12 +80,20 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 
 	@Override
 	public Job<String> submit(Callable<String> job) throws RemoteException {
-//		activeClients++;
-		Future<String> res = exec.submit(job);
-		Job<String> ret = new JobImpl<String>();
-		openFuture.add(res);
-		openResults.add(ret);
-		return ret;
+		activeJobs++;
+		System.out.println("Jobs active: " + activeJobs);
+		if (activeJobs > maxNumOfJobs){
+			activeJobs--;
+			return null;
+		}
+		else {
+			Future<String> res = exec.submit(job);
+			Job<String> ret = new JobImpl<String>();
+			openFuture.add(res);
+			openResults.add(ret);
+			return ret;
+		}
+		
 	}
 	
 	protected ArrayList<Future<String>> getFutureList() {

@@ -10,15 +10,12 @@ import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 
-// TODO client should be asynch
-// TODO polling service
 public class Client implements Remote{
 	private static ServerIF server;
 	private static String url = "//127.0.0.1/Server";
 	private Scanner input;
 	private int first;
 	private String operation;
-	private int result;
 	private boolean running;
 	
 	public Client() throws RemoteException {
@@ -28,7 +25,7 @@ public class Client implements Remote{
 		int scanned = -1;
 		while (running) {
 			System.out
-					.println("Please enter your Operation:\n0...Exit1...Factorial\n2...Submit Job(fib 10)\n3...Submit Job (fib dynamic)\n");
+					.println("Please enter your Operation:\n0...Exit\n1...Factorial\n2...Submit Job(fib 10)\n3...Submit Job (fib dynamic)\n");
 			while (!input.hasNextInt()){
 				input.next();	// waste if input is string
 				System.out.println("Enter the number of your operation");
@@ -38,14 +35,20 @@ public class Client implements Remote{
 			case 1:
 				operation = "Factorial";
 				enterNumber();
-				result = server.factorail(first);
-				printResult();
+				int result = server.factorail(first);
+				printResult(result);
 				break;
 			case 2:
 				Callable<String> job = new CallableImpl();
 				System.out.println(("Input: " + ((CallableImpl) job).getFib()));
 				Job<String> jobDone = server.submit(job);
-				new Thread(new PollingService(jobDone, this)).start();
+				if (jobDone != null){
+					new Thread(new PollingService(jobDone, this)).start();
+					System.out.println("Job accepted");
+				} else {
+					System.out.println("Job refused");
+				}
+					
 				break;
 			case 3: 
 				Callable<String> job1 = new CallableImpl();
@@ -77,12 +80,12 @@ public class Client implements Remote{
 		String input = this.input.next();
 		return input;
 	}
-	public void printResult() {
+	public void printResult(int result) {
 		System.out.println("The Result of the Operation " + operation + " is "
 				+ result + "\n\n\n");
 	}
 	
-	public void deliverResult(String result2) {
+	public void printResult(String result2) {
 		System.out.println(result2);
 	}
 	

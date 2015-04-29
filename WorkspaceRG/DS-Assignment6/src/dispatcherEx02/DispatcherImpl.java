@@ -13,9 +13,8 @@ import server.Server;
 import interfaces.Dispatcher;
 import interfaces.Job;
 
-//TODO adapt all operations or delete them (except Fibonacci)
+//TODO direct delivery of result without dispatcher
 //TODO c) theory question
-//TODO single server shutdown by name?
 
 public class DispatcherImpl extends UnicastRemoteObject implements Dispatcher{
 	private static final long serialVersionUID = 1L;
@@ -57,6 +56,12 @@ public class DispatcherImpl extends UnicastRemoteObject implements Dispatcher{
 	
 	public Job<String> submit(Callable<String> job) throws RemoteException{
 		Server currentServer = randomServer();
+		Job<String> tmp = currentServer.submit(job);
+		// pick other server if current picked is lazy
+		while (tmp == null){
+			currentServer = randomServer();
+			tmp = currentServer.submit(job);
+		}
 		return currentServer.submit(job);
 	}
 	

@@ -37,6 +37,8 @@ public class ResultChecker implements Runnable{
 					} else {
 						try {
 							// set result if future is finished
+							server.activeJobs--;
+							System.out.println("Jobs active: " + server.activeJobs);
 							job.setResult("result from " + server.getName() + ":" + tmp.get(i).get());
 						} catch (InterruptedException | ExecutionException e) {
 							e.printStackTrace();

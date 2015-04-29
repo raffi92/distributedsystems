@@ -24,7 +24,7 @@ public class PollingService implements Runnable{
 			
 			if(open.isDone()){
 				System.out.println("isDone");
-				client.deliverResult(open.getResult());
+				client.printResult(open.getResult());
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
