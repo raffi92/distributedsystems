@@ -1,0 +1,41 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from ComputationService WSDL service -->
+
+  <service name="Computation" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://wtp"/>
+      <parameter name="wsdlServiceElement" value="ComputationService"/>
+      <parameter name="schemaQualified" value="http://wtp"/>
+      <parameter name="wsdlServicePort" value="Computation"/>
+      <parameter name="className" value="wtp.ComputationSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="Computation"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="addition" qname="operNS:addition" xmlns:operNS="http://wtp" returnQName="retNS:additionReturn" xmlns:retNS="http://wtp" returnType="rtns:integer" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="" >
+        <parameter qname="pns:one" xmlns:pns="http://wtp" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="pns:two" xmlns:pns="http://wtp" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="factorial" qname="operNS:factorial" xmlns:operNS="http://wtp" returnQName="retNS:factorialReturn" xmlns:retNS="http://wtp" returnType="rtns:integer" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="" >
+        <parameter qname="pns:fac" xmlns:pns="http://wtp" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="multiplication" qname="operNS:multiplication" xmlns:operNS="http://wtp" returnQName="retNS:multiplicationReturn" xmlns:retNS="http://wtp" returnType="rtns:integer" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="" >
+        <parameter qname="pns:one" xmlns:pns="http://wtp" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="pns:two" xmlns:pns="http://wtp" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="substraction" qname="operNS:substraction" xmlns:operNS="http://wtp" returnQName="retNS:substractionReturn" xmlns:retNS="http://wtp" returnType="rtns:integer" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="" >
+        <parameter qname="pns:one" xmlns:pns="http://wtp" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="pns:two" xmlns:pns="http://wtp" type="tns:integer" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="multiplication substraction factorial addition"/>
+
+  </service>
+</deployment>
