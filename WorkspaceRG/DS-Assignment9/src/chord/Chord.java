@@ -26,7 +26,8 @@ public class Chord implements ChordIF{
 		initFingerTable();
 		Chord joinChord = protocol.findId(joinId);
 		joinChord.join(this);
-		System.out.println("New node with id " + id);
+		if (protocol.getOutputflag())
+			System.out.println("New node with id " + id);
 	}
 
 	@Override
@@ -35,15 +36,20 @@ public class Chord implements ChordIF{
 	}
 
 	@Override
-	public void sendMSG(String text, int target) {
-		System.out.println("send message from " + id + " to " + target);
+	public void sendMSG(String text, int target, boolean flag, int msgIndex, boolean first) {
 		
-		int nextNodeId = findNextTarget(target);
+		
 		if (id != target){
+			int nextNodeId = findNextTarget(target, flag);
+			if (flag){
+				System.out.println("send message from " + id + " to " + nextNodeId);
+			}
+			protocol.incHops(msgIndex, first);
 			Chord nextChord = protocol.findId(nextNodeId);
-			nextChord.sendMSG(text, target);
+			nextChord.sendMSG(text, target, flag, msgIndex, false);
 		} else {
-			System.out.println("Node " + id + " received message: " + text );
+			if (flag)
+				System.out.println("Node " + id + " received message: " + text );
 		}
 	}
 	
@@ -110,17 +116,34 @@ public class Chord implements ChordIF{
 		return d;
 	}
 	
-	private int findNextTarget(int target){
-		for (int i = fingertable.size()-1; i >= 0; i--){
-			int nextNodeId = fingertable.get(i).getNode();
+	private int findNextTarget(int target, boolean flag){
+		int nextNodeId = 0;
+		int i = fingertable.size()-1;
+		for (; i >= 0; i--){
+			nextNodeId = fingertable.get(i).getNode();
 			if (nextNodeId > id && nextNodeId <= target){
+				if (flag)
+					System.out.print("Next node index "  + fingertable.get(i).getIndex() + ". ");
 				return nextNodeId;
 			}
 			// nextNodeId goes over the end of the ring
-			if (nextNodeId < target && nextNodeId < id && id > target)
+			if (nextNodeId <= target && nextNodeId < id && id > target){
+				if (flag)
+					System.out.print("Next node index "  + fingertable.get(i).getIndex() + ". ");
 				return nextNodeId;
+			}
+			// nextNodeId is before the end of the ring and target is after the end of the ring
+			if (nextNodeId > id && nextNodeId > target && id > target){
+				if (flag)
+					System.out.print("Next node index "  + fingertable.get(i).getIndex() + ". ");
+				return nextNodeId;
+			}
+				
+				
 		}
-		// never needed
-		return 0;
+		// TODO bug: because succuessor of node (id) is after target
+		// TODO solve: print fingertables and check nodes at index 0
+		System.out.println(id + "--" + nextNodeId + "--" + target + "--- " + i + "---" + fingertable.get(0).getNode());
+		return target;
 	}
 }

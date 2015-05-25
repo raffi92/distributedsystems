@@ -10,11 +10,13 @@ import chord.Chord;
 public class Protocol {
 	private static Protocol instance;
 	private static ArrayList<Chord> nodes;
+	private static ArrayList<Integer> hops;
 	// m is the number of bits within the address of a node
 	private int m = 5; // default 32 nodes
-
+	private boolean flag = true;
 	private Protocol() {
 		nodes = new ArrayList<Chord>();
+		hops = new ArrayList<>();
 	};
 
 	public static Protocol getInstance() {
@@ -46,6 +48,23 @@ public class Protocol {
 	public int getM() {
 		return m;
 	}
+	
+	public void setM(int m){
+		this.m = m;
+	}
+	
+	public void incHops(int index, boolean first){
+		if (first)
+			hops.add(index, 1);
+		else {
+			int tmp = hops.get(index);
+			hops.set(index, ++tmp);
+		}
+	}
+	
+	public ArrayList<Chord> getChords(){
+		return nodes;
+	}
 
 	public int findNextNode(int id, int start) {
 		int i = 0;
@@ -69,11 +88,9 @@ public class Protocol {
 	public void updateFingers(int id) {
 		Chord next = findId(findNextNode(id, id+1));
 		next.setPredecessor(id);
-		System.out.println("node added " +  id);
 		for (int i = 0; i < m; i++) {
 			int preId = lookupPredecessorOfFinger(id-(int)Math.pow(2, i));  // n-2i-1 -> without -1 because we iterate i from 0 to m
 			Chord c = findId(preId);
-			System.out.println(c.getDistance(i) + "   " + c.getDistance(i, id));
 			while (c.getDistance(i) > c.getDistance(i, id)){
 				if (c.getId() == 3)
 					System.out.println("set finger " + i + " of node " + c.getId() + " to " + id);
@@ -144,6 +161,43 @@ public class Protocol {
 			c.printFinger();
 			System.out.println("Predecessor: " + c.getPredecessor());
 		}
+	}
+	
+	public void printHops(){
+		for(int i = 0; i < hops.size(); i++){
+			System.out.println("MessageId " + i + ": " + hops.get(i) + " hops");
+		}
+	}
+	
+	public void calcMinMaxAvgHops(){
+		int min = (int) Math.pow(2, 31); // high int
+		int max = -1;
+		int sum = 0;
+		for (Integer i : hops){
+			if (i < min){
+				min = i;
+			}
+			if (i > max){
+				max = i;
+			}
+			sum += i;
+		}
+		System.out.println("Min: " + min);
+		System.out.println("Max: " + max);
+		System.out.println("Avg: " + (double)sum/ (double) hops.size());
+	}
+	
+	public void clearLists(){
+		hops.clear();
+		nodes.clear();
+	}
+	
+	public void setOutputflag(boolean flag){
+		this.flag = flag;
+	}
+	
+	public boolean getOutputflag(){
+		return flag;
 	}
 	
 }
