@@ -30,7 +30,6 @@ public class Shutdown extends Thread{
 					try {
 						Naming.unbind(name);
 					} catch (RemoteException | MalformedURLException | NotBoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					server.running = false;
