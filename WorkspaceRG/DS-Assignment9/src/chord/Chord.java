@@ -146,4 +146,25 @@ public class Chord implements ChordIF{
 		System.out.println(id + "--" + nextNodeId + "--" + target + "--- " + i + "---" + fingertable.get(0).getNode());
 		return target;
 	}
+	
+	public void put(int key, String value){
+		getFinger(key).setValue(value);
+	}
+	
+	public String get(int key){
+		return fingertable.get(key).getValue().toString();
+	}
+	
+	public boolean contains(String value){
+		for(int i = 0; i < fingertable.size(); i++){
+			if(getFinger(i).getValue().toString() == value){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void remove(int key){
+		getFinger(key).setValue(null);
+	}
 }
