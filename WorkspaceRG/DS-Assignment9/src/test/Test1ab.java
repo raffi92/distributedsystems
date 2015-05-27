@@ -17,8 +17,9 @@ public class Test1ab {
 		new Chord(27, 1);
 		
 		protocol.printTables();
-		c1.sendMSG("test", 27, true, 0, true);
-		c25.sendMSG("test", 8, true, 1, true);
+		protocol.initHops(2);
+		c1.sendMSG("test", 27, 0);
+		c25.sendMSG("test", 8, 1);
 	}
 
 }

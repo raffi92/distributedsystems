@@ -10,6 +10,7 @@ public class Test1c {
 	private static ArrayList<Integer> ids = new ArrayList<>();
 	private static int m = 12;
 	private static int numberOfTests = 100;
+	private static int numberOfMessages = 100;
 	public static void main(String[] args) {
 		Protocol protocol = Protocol.getInstance();
 		protocol.setM(m);
@@ -24,21 +25,32 @@ public class Test1c {
 				}
 				new Chord(newId, 1);
 			}
-			//protocol.printTables();
-			
+			protocol.initHops(numberOfMessages);
+			int sentMessages = 0;
 			for (int i = 0; i < protocol.getChords().size(); i++){
 				int randTargetIndex = random.nextInt(protocol.getChords().size());
-				// disable send message to yourself
-				while (randTargetIndex == i){
-					randTargetIndex = random.nextInt(protocol.getChords().size());
-				}
 				Chord source = protocol.getChords().get(i);
-				int targetIndex = protocol.getChords().get(randTargetIndex).getId();
-				source.sendMSG("test", targetIndex, false, i, true);
+				int targetId = protocol.getChords().get(randTargetIndex).getId();
+				sentMessages++;
+				// disable send message to yourself
+				while (targetId == source.getId()){
+					randTargetIndex = random.nextInt(protocol.getChords().size());
+					targetId = protocol.getChords().get(randTargetIndex).getId();
+				}
+				source.sendMSG("test", targetId, i);
 			}
-			
-			//protocol.printHops();
+			System.out.println("sent messages: " + sentMessages + "\tnumber of nodes: " + protocol.getChords().size());
+			System.out.println("-----------Test #" + (j+1) + " done-----------");
+			// clear lists for next test
 			protocol.calcMinMaxAvgHops();
+			protocol.clearLists(numberOfMessages);
+			ids.clear();
+			// sleep to compare statistics
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}

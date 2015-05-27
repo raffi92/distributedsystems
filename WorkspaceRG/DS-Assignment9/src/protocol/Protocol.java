@@ -13,7 +13,7 @@ public class Protocol {
 	private static ArrayList<Integer> hops;
 	// m is the number of bits within the address of a node
 	private int m = 5; // default 32 nodes
-	private boolean flag = true;
+	private boolean flag = true;	// flag for output 
 	private Protocol() {
 		nodes = new ArrayList<Chord>();
 		hops = new ArrayList<>();
@@ -40,9 +40,7 @@ public class Protocol {
 			}
 			nodes.add(i, c);
 		}
-
 		updateFingers(c.getId());
-		
 	}
 
 	public int getM() {
@@ -53,13 +51,16 @@ public class Protocol {
 		this.m = m;
 	}
 	
-	public void incHops(int index, boolean first){
-		if (first)
-			hops.add(index, 1);
-		else {
-			int tmp = hops.get(index);
-			hops.set(index, ++tmp);
+	public void initHops(int size){
+		hops.clear();
+		for (int i = 0; i<size; i++){
+			hops.add(0);
 		}
+	}
+	
+	public void incHops(int index){
+		int tmp = hops.get(index);
+		hops.set(index, ++tmp);
 	}
 	
 	public ArrayList<Chord> getChords(){
@@ -92,14 +93,12 @@ public class Protocol {
 			int preId = lookupPredecessorOfFinger(id-(int)Math.pow(2, i));  // n-2i-1 -> without -1 because we iterate i from 0 to m
 			Chord c = findId(preId);
 			while (c.getDistance(i) > c.getDistance(i, id)){
-				if (c.getId() == 3)
-					System.out.println("set finger " + i + " of node " + c.getId() + " to " + id);
 				c.setFinger(i, id);
 				c = findId(lookupPredecessor(c.getId()));
 			}
 		}
 	}
-
+	// predecessor of node
 	public int lookupPredecessor(int id) {
 		int i = 0;
 		//System.out.println(nodes.size());
@@ -117,7 +116,7 @@ public class Protocol {
 		}
 		return nodes.get(i-1).getId();
 	}
-	
+	// predecessor of finger
 	public int lookupPredecessorOfFinger(int fingerId){
 		int i = 0;
 		//System.out.println(nodes.size());
@@ -139,13 +138,6 @@ public class Protocol {
 		return nodes.get(i-1).getId();
 	}
 
-	public void printChords() {
-		System.out.println("Chord ids:");
-		for (Chord c : nodes) {
-			System.out.println(c.getId());
-		}
-	}
-
 	public Chord findId(int id) {
 		for (Chord c : nodes) {
 			if (c.getId() == id)
@@ -160,12 +152,6 @@ public class Protocol {
 			System.out.println("Table of node " + c.getId());
 			c.printFinger();
 			System.out.println("Predecessor: " + c.getPredecessor());
-		}
-	}
-	
-	public void printHops(){
-		for(int i = 0; i < hops.size(); i++){
-			System.out.println("MessageId " + i + ": " + hops.get(i) + " hops");
 		}
 	}
 	
@@ -187,8 +173,8 @@ public class Protocol {
 		System.out.println("Avg: " + (double)sum/ (double) hops.size());
 	}
 	
-	public void clearLists(){
-		hops.clear();
+	public void clearLists(int size){
+		initHops(size);
 		nodes.clear();
 	}
 	
