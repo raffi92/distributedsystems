@@ -52,8 +52,6 @@ public class Server {
 		int amount = bufferedReader.read(buffer, 0, 500);
 		message = new String(buffer, 0, amount);
 		getKey(message);
-		System.out.println(decrypted);
-		System.out.println(keyString);
 		return decode(decrypted,keyString);
 	}
 	
@@ -85,18 +83,13 @@ public class Server {
 	{
 		key = Integer.parseInt(keyS);
 		String in = "";
-		//StringBuilder in = new StringBuilder();
 		key = 98 - key;
 		for (int i = 0; i < out.length(); i++) {
 			char ch = out.charAt(i);
-			int cache = (' ' + ((ch - ' ' + key) % 98));
+			int cache = (' ' + ((ch - ' ' + key) % 98)) + 98;
 			ch = (char) cache;
-			//ch = (char) (' ' + ((ch - ' ' + key) % 98));
-			//System.out.println(ch);
 			in += ch;
-			//in.append(ch);
 		}
-		System.out.println(in);
 		return in.toString();
 	}
 	
