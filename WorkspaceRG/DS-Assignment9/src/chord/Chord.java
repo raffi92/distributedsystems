@@ -9,6 +9,7 @@ public class Chord implements ChordIF{
 	int predecessor;
 	private ArrayList<TableEntry> fingertable;
 	private Protocol protocol;
+	private ArrayList <DHT> dhttable = new ArrayList<DHT>();
 	
 	public Chord(int id){
 		this.id = id;
@@ -146,16 +147,21 @@ public class Chord implements ChordIF{
 	}
 	
 	public void put(int key, String value){
-		getFinger(key).setValue(value);
+		//getFinger(key).setValue(value);
+		if(contains(value)){
+			
+		}
+
 	}
 	
 	public String get(int key){
-		return fingertable.get(key).getValue().toString();
+		return null; //(String) dht.get(key);
+		//return fingertable.get(key).getValue().toString();
 	}
 	
 	public boolean contains(String value){
 		for(int i = 0; i < fingertable.size(); i++){
-			if(getFinger(i).getValue().toString() == value){
+			if(getFinger(i).getValue().toString() == value){				
 				return true;
 			}
 		}

@@ -1,13 +1,15 @@
 package chord;
 
+import java.rmi.MarshalledObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Wrapper<K,T> implements Map<K,T>{
-	//private ArrayList<TableEntry> fingertable;
+public class DHT<K,T> implements Map<K,T>{
+	private int key;
+	private MarshalledObject Value;
 	
 	@Override
 	public int size() {
@@ -31,11 +33,13 @@ public class Wrapper<K,T> implements Map<K,T>{
 
 	@Override
 	public T get(Object key) {
+		//backhash
 		return null;
 	}
 
 	@Override
 	public T put(K key, T value) {
+		key.hashCode();
 		return null;
 	}
 	
