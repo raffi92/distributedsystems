@@ -52,7 +52,7 @@ public class Server {
 		int amount = bufferedReader.read(buffer, 0, 500);
 		message = new String(buffer, 0, amount);
 		getKey(message);
-		return decode(decrypted,keyString);
+		return decrypt(decrypted,keyString);
 	}
 	
 	private void getKey(String message) {
@@ -79,7 +79,7 @@ public class Server {
 		System.out.println("Decrypted message: " + encrypted);
 	}
 	
-	private String decode(String out, String keyS)
+	private String decrypt(String out, String keyS)
 	{
 		key = Integer.parseInt(keyS);
 		String in = "";

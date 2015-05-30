@@ -6,10 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
-
-import server.Server;
 
 public class Client {
 		private String ip = "127.0.0.1"; // localhost
@@ -19,7 +16,11 @@ public class Client {
 		
 		public Client(String[] args){
 			try {
-				getKey(args);
+				if (args.length != 1){
+					System.out.println("Wrong number of parameter. Argument 0 must be the key");
+					System.exit(0);
+				}
+				setKey(args[0]);
 				socket = new Socket(ip,port);
 				String message = enterMessage();
 				writeMsg(socket,message);
@@ -35,7 +36,7 @@ public class Client {
 	}
 	
 	private void writeMsg(Socket socket, String message) throws IOException {
-		message = encode(message,key);
+		message = encode(message);
 		PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 		printWriter.print(message);
 		printWriter.flush();
@@ -49,7 +50,7 @@ public class Client {
 		return message;
 	}
 	
-	private String encode(String in, int key)
+	private String encode(String in)
 	{
 		String out = "";
 		for (int i = 0; i < in.length(); i++) {
@@ -65,15 +66,8 @@ public class Client {
 	}
 
 	
-	private void getKey(String[] args){
-		if(args.length > 0){
-			key = Integer.parseInt(args[0]);
-			return;
-		}
-		else{
-			System.out.println("Please enter your key as param. Try again!");
-			System.exit(0);
-		}
+	private void setKey(String arg){
+		key = Integer.parseInt(arg);
 	}
 	
 	public static void main(String[] args){
