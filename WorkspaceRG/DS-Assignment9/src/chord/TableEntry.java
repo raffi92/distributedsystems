@@ -1,14 +1,11 @@
 package chord;
 
-import java.io.IOException;
-import java.rmi.MarshalledObject;
 
 public class TableEntry {
 	private int index;
 	private int start;
 	private int node;
 	private int key;
-	private MarshalledObject value;
 	
 	/**
 	 * Exercise01
@@ -55,20 +52,4 @@ public class TableEntry {
 		return key;
 	}
 	
-	public void setValue(Object value){
-		try {
-			if (this.value.equals(null))
-				this.value = new MarshalledObject(value);
-			else
-				this.value = (MarshalledObject) value;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public MarshalledObject getValue(){
-		return value;
-	}
-
 }
