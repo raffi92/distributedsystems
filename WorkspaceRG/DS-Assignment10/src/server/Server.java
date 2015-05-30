@@ -8,6 +8,9 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import encryption.EncryptionIF;
+import encryption.SimpleEncryption;
+
 public class Server {
 	int port = 11111;
 	private ServerSocket ssocket;
@@ -17,12 +20,19 @@ public class Server {
 	private String message;
 	private String decrypted;
 	private String encrypted;
+	private EncryptionIF method;
 	
-	public Server(){
+	public Server(String [] args){
 		try {
+			if (args.length != 1){
+				System.out.println("Wrong number of parameter. Argument 0 must be the key");
+				System.exit(0);
+			}
 			ssocket= new ServerSocket(port);
 			System.out.println("Waiting for client");
 			client = connect();
+			method = new SimpleEncryption();
+			method.setKey(args[0]);
 			System.out.println("connected");
 			encrypted = readMsg(client);
 			printAll();
@@ -51,8 +61,9 @@ public class Server {
 		char[] buffer = new char[500];
 		int amount = bufferedReader.read(buffer, 0, 500);
 		message = new String(buffer, 0, amount);
-		getKey(message);
-		return decrypt(decrypted,keyString);
+		getKey(message);				// TODO getkey brauchen wir dann nicht mehr weil key als paramter gesetzt wird
+		int [] toDecrypt = method.StringToIntArray(decrypted);	// TODO jetzt liest bufferedReader in char[], dann wird string gebaut, dann string wieder zu int [] konvertiert --> vereinfachen
+		return method.decrypt(toDecrypt);
 	}
 	
 	private void getKey(String message) {
@@ -79,22 +90,7 @@ public class Server {
 		System.out.println("Decrypted message: " + encrypted);
 	}
 	
-	private String decrypt(String out, String keyS)
-	{
-		key = Integer.parseInt(keyS);
-		String in = "";
-		key = 98 - key;
-		for (int i = 0; i < out.length(); i++) {
-			char ch = out.charAt(i);
-			int cache = (' ' + ((ch - ' ' + key) % 98)) + 98;
-			ch = (char) cache;
-			in += ch;
-		}
-		return in.toString();
-	}
-	
-	
 	public static void main(String[] args){
-		Server server = new Server();
+		Server server = new Server(args);
 	}
 }

@@ -1,6 +1,6 @@
 package encryption;
 
-public class SimpleEncryption extends EncryptionAbstract{
+public class SimpleEncryption extends EncryptionIF{
 	private int key;
 	@Override
 	public void setKey(String keyString) {
@@ -24,6 +24,7 @@ public class SimpleEncryption extends EncryptionAbstract{
 
 	@Override
 	public String decrypt(int[] ciphertext) {
+		String out = IntArrayToString(ciphertext);
 		String in = "";
 		key = 98 - key;
 		for (int i = 0; i < out.length(); i++) {
@@ -32,7 +33,7 @@ public class SimpleEncryption extends EncryptionAbstract{
 			ch = (char) cache;
 			in += ch;
 		}
-		return in.toString();
+		return in;
 	}
 
 }

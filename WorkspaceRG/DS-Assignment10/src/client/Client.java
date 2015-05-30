@@ -8,11 +8,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import encryption.EncryptionIF;
+import encryption.SimpleEncryption;
+
 public class Client {
 		private String ip = "127.0.0.1"; // localhost
 		private int port = 11111;
 		private Socket socket;
-		private int key;
+		private EncryptionIF method;
 		
 		public Client(String[] args){
 			try {
@@ -20,7 +23,8 @@ public class Client {
 					System.out.println("Wrong number of parameter. Argument 0 must be the key");
 					System.exit(0);
 				}
-				setKey(args[0]);
+				method = new SimpleEncryption();	// can be replaced by new RC4() when all TODOs in server class are done
+				method.setKey(args[0]);
 				socket = new Socket(ip,port);
 				String message = enterMessage();
 				writeMsg(socket,message);
@@ -36,7 +40,8 @@ public class Client {
 	}
 	
 	private void writeMsg(Socket socket, String message) throws IOException {
-		message = encode(message);
+		int [] messageInt = method.encrypt(message);
+		message = method.IntArrayToString(messageInt);
 		PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 		printWriter.print(message);
 		printWriter.flush();
@@ -48,26 +53,6 @@ public class Client {
 		int amount = bufferedReader.read(buffer, 0, 200);
 		String message = new String(buffer, 0, amount);
 		return message;
-	}
-	
-	private String encode(String in)
-	{
-		String out = "";
-		for (int i = 0; i < in.length(); i++) {
-			char ch = in.charAt(i);
-			ch = (char) (' ' + ((ch - ' ' + key) % 98));
-			out += ch;
-		}
-		String keyString = Integer.toString(key);
-		int length = keyString.length();
-		out = out + keyString + '+' + length;
-		System.out.println(out);
-		return out;
-	}
-
-	
-	private void setKey(String arg){
-		key = Integer.parseInt(arg);
 	}
 	
 	public static void main(String[] args){

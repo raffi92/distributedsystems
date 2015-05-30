@@ -2,7 +2,7 @@ package encryption;
 
 import java.util.Arrays;
 
-public class RC4 extends EncryptionAbstract{
+public class RC4 extends EncryptionIF{
 	private final int[] S = new int[256];
 	private int keylen;
 
@@ -50,7 +50,7 @@ public class RC4 extends EncryptionAbstract{
 	public String decrypt(final int[] ciphertext) {
 		return IntArrayToString(encrypt(IntArrayToString(ciphertext)));
 	}
-
+	// test rc4
 	public static void main(String[] args) {
 		String input = "hallo";
 		String key = "key";
