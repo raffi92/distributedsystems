@@ -9,29 +9,36 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import encryption.EncryptionIF;
+import encryption.RC4;
 import encryption.SimpleEncryption;
 
 public class Server {
 	int port = 11111;
 	private ServerSocket ssocket;
 	private Socket client;
-	private String keyString;
-	private int key;
 	private String message;
-	private String decrypted;
 	private String encrypted;
 	private EncryptionIF method;
 	
 	public Server(String [] args){
 		try {
-			if (args.length != 1){
-				System.out.println("Wrong number of parameter. Argument 0 must be the key");
+			if (args.length != 2){
+				System.out.println("Usage: java server.class [key] [method] Wrong number of parameter. \nArgument 1 must be the key\nArgument 2 must be the selected method\n[method]: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
 				System.exit(0);
 			}
 			ssocket= new ServerSocket(port);
 			System.out.println("Waiting for client");
 			client = connect();
-			method = new SimpleEncryption();
+			method = null;
+			if (Integer.parseInt(args[1]) == 0)
+				method = new SimpleEncryption();
+			if (Integer.parseInt((args[1])) == 1)
+				method = new RC4();
+			if (method == null){
+				System.out.println("Wrong method: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
+				System.exit(0);
+			}
+				
 			method.setKey(args[0]);
 			System.out.println("connected");
 			encrypted = readMsg(client);
@@ -61,29 +68,10 @@ public class Server {
 		char[] buffer = new char[500];
 		int amount = bufferedReader.read(buffer, 0, 500);
 		message = new String(buffer, 0, amount);
-		getKey(message);				// TODO getkey brauchen wir dann nicht mehr weil key als paramter gesetzt wird
-		int [] toDecrypt = method.StringToIntArray(decrypted);	// TODO jetzt liest bufferedReader in char[], dann wird string gebaut, dann string wieder zu int [] konvertiert --> vereinfachen
+		int [] toDecrypt = method.StringToIntArray(message);	// TODO jetzt liest bufferedReader in char[], dann wird string gebaut, dann string wieder zu int [] konvertiert --> vereinfachen
 		return method.decrypt(toDecrypt);
 	}
 	
-	private void getKey(String message) {
-		StringBuilder cache = new StringBuilder();
-		int i = message.length()-1;
-		for(; i > 0 ; i--){
-			if(message.charAt(i) == '+'){
-				decrypted = message.substring(0,i);
-				int j = i++;
-				for(;j < message.length();j++){
-					cache.append(message.charAt(j));
-				}
-				int keylength = Integer.parseInt(cache.toString());
-				keyString = decrypted.substring(decrypted.length()-keylength,decrypted.length());
-				decrypted = decrypted.substring(0,decrypted.length()-keylength);
-				return;
-			}
-		}	
-	}
-
 	private void printAll(){
 		System.out.println("++++++++++++++++++++++++++++++++");
 		System.out.println("Received message: " + message);
@@ -91,6 +79,6 @@ public class Server {
 	}
 	
 	public static void main(String[] args){
-		Server server = new Server(args);
+		new Server(args);
 	}
 }

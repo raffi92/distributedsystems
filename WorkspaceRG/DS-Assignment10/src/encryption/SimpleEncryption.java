@@ -15,9 +15,6 @@ public class SimpleEncryption extends EncryptionIF{
 			ch = (char) (' ' + ((ch - ' ' + key) % 98));
 			out += ch;
 		}
-		String keyString = Integer.toString(key);
-		int length = keyString.length();
-		out = out + keyString + '+' + length;
 		System.out.println(out);
 		return StringToIntArray(out);
 	}
