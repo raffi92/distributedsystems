@@ -1,15 +1,25 @@
 package server;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
+import java.security.PrivateKey;
+
+import org.omg.CORBA.portable.InputStream;
 
 import encryption.EncryptionIF;
 import encryption.RC4;
+import encryption.RSA;
 import encryption.SimpleEncryption;
 
 public class Server {
@@ -20,34 +30,69 @@ public class Server {
 	private String encrypted;
 	private EncryptionIF method;
 	
-	public Server(String [] args){
+	public Server(String [] args) throws ClassNotFoundException{
 		try {
-			if (args.length != 2){
-				System.out.println("Usage: java server.class [key] [method] Wrong number of parameter. \nArgument 1 must be the key\nArgument 2 must be the selected method\n[method]: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
-				System.exit(0);
-			}
 			ssocket= new ServerSocket(port);
 			System.out.println("Waiting for client");
-			client = connect();
+			client = connect();	
+			System.out.println("connected");
 			method = null;
-			if (Integer.parseInt(args[1]) == 0)
-				method = new SimpleEncryption();
-			if (Integer.parseInt((args[1])) == 1)
-				method = new RC4();
+			
+			if (args.length == 0){
+				method = new RSA();
+				encrypted = readRSAMsg(client);
+			}
+			else if (args.length == 2){
+				if (Integer.parseInt(args[1]) == 0)
+					method = new SimpleEncryption();
+				if (Integer.parseInt((args[1])) == 1)
+					method = new RC4();
+				method.setKey(args[0]);
+				encrypted = readMsg(client);
+				}
+			else {
+				System.out.println("Usage: java client.class [key] [method] Wrong number of parameter. \nArgument 1 must be the key\nArgument 2 must be the selected method\n[method]: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
+				System.exit(0);
+			}
 			if (method == null){
 				System.out.println("Wrong method: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
 				System.exit(0);
-			}
-				
-			method.setKey(args[0]);
-			System.out.println("connected");
-			encrypted = readMsg(client);
+			}			
+
 			printAll();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * TODO get byte[] not String from BufferedReader [now: DecryptionError]
+	 * @param client
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	private String readRSAMsg(Socket client) throws IOException, ClassNotFoundException {
+		ObjectInputStream inputStream = null;
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+		char[] buffer = new char[500];
+		int amount = bufferedReader.read(buffer, 0, 500);
+
+//		BufferedInputStream input = new BufferedInputStream(client.getInputStream());
+		byte[] mes = null;
+		//while (input.read(mes) != -1);
+//		ByteArrayInputStream bInput = new ByteArrayInputStream();
+//		System.out.println(mes);
+//		bInput.read(mes);
+		message = new String(buffer, 0, amount);
+		mes = message.getBytes(Charset.forName("US-ASCII")	);
+		//System.out.println(message);
+		System.out.println(mes);
+	    inputStream = new ObjectInputStream(new FileInputStream(method.PRIVATE_KEY_FILE));
+	    final PrivateKey privateKey = (PrivateKey) inputStream.readObject();
+		return method.decrypt(mes, privateKey);
+	}
+
 	public Socket connect(){
 		try {
 			return ssocket.accept();
@@ -78,7 +123,7 @@ public class Server {
 		System.out.println("Decrypted message: " + encrypted);
 	}
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws ClassNotFoundException{
 		new Server(args);
 	}
 }

@@ -1,16 +1,22 @@
 package client;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.security.PublicKey;
 import java.util.Scanner;
 
 import encryption.EncryptionIF;
 import encryption.RC4;
 import encryption.SimpleEncryption;
+import encryption.RSA;
 
 public class Client {
 		private String ip = "127.0.0.1"; // localhost
@@ -20,28 +26,36 @@ public class Client {
 		
 		public Client(String[] args){
 			try {
-				if (args.length != 2){
+				String message;
+				socket = new Socket(ip,port);
+				method = null;
+				if (args.length == 0){
+					method = new RSA();
+					message = enterMessage();
+					writeRSAMsg(socket,message);
+				}
+				else if (args.length == 2){
+					if (Integer.parseInt(args[1]) == 0)
+						method = new SimpleEncryption();
+					if (Integer.parseInt((args[1])) == 1)
+						method = new RC4();
+					method.setKey(args[0]);
+					message = enterMessage();
+					writeMsg(socket,message);
+				}
+				else {
 					System.out.println("Usage: java client.class [key] [method] Wrong number of parameter. \nArgument 1 must be the key\nArgument 2 must be the selected method\n[method]: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
 					System.exit(0);
 				}
-				method = null;
-				if (Integer.parseInt(args[1]) == 0)
-					method = new SimpleEncryption();
-				if (Integer.parseInt((args[1])) == 1)
-					method = new RC4();
 				if (method == null){
 					System.out.println("Wrong method: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
 					System.exit(0);
 				}
-				method.setKey(args[0]);
-				socket = new Socket(ip,port);
-				String message = enterMessage();
-				writeMsg(socket,message);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	public String enterMessage(){
 		Scanner scanner = new Scanner(System.in); 
 		System.out.println("Please enter your message");
@@ -58,6 +72,27 @@ public class Client {
 		printWriter.flush();
 	}
 	
+	private void writeRSAMsg(Socket socket, String message) {
+		ObjectInputStream inputStream = null;
+	      try {
+			inputStream = new ObjectInputStream(new FileInputStream(method.PUBLIC_KEY_FILE));
+		    final PublicKey publicKey = (PublicKey) inputStream.readObject();
+		    final byte[] cipherText = method.encrypt(message, publicKey);
+		    System.out.println(cipherText);
+//		    ByteArrayOutputStream bOutput = new ByteArrayOutputStream(12);
+//		    bOutput.write(cipherText);
+		    
+			PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+			printWriter.print(cipherText);
+			printWriter.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
 	public String readMsg(Socket socket) throws IOException {
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		char[] buffer = new char[200];
@@ -69,39 +104,4 @@ public class Client {
 	public static void main(String[] args){
 		new Client(args);
 	}
-
-/**
- * RSA
- * 
- * try {
-      // zufaelligen Schluessel erzeugen
-      KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
-      keygen.initialize(1024);
-      KeyPair rsaKeys = keygen.genKeyPair();
-       
-      // Klasse erzeugen
-      EasyCrypt ecPri = new EasyCrypt(rsaKeys.getPrivate(), "RSA");
-      EasyCrypt ecPub = new EasyCrypt(rsaKeys.getPublic(), "RSA");
-       
-      // Text ver- und entschluesseln
-      String text = "Hallo AxxG-Leser";
-      String geheim = ecPri.encrypt(text);
-      String erg = ecPub.decrypt(geheim);
-       
-      System.out.println("Normaler Text:" + text);
-      System.out.println("Geheimer Text:" + geheim);
-      System.out.println("decrypt  Text:" + erg);      
-       
-      // oder 
-       
-      text = "Hallo AxxG-Leser";
-      geheim = ecPub.encrypt(text);
-      erg = ecPri.decrypt(geheim);
-       
-      System.out.println("Normaler Text:" + text);
-      System.out.println("Geheimer Text:" + geheim);
-      System.out.println("decrypt  Text:" + erg);         
-   } catch (Exception e) {
-      e.printStackTrace();
-   }*/
-	}
+}
