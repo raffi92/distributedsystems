@@ -1,6 +1,7 @@
 package server;
 
 import java.io.BufferedInputStream;
+import org.apache.commons.codec.binary.Base64;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,6 +68,7 @@ public class Server {
 	
 	/**
 	 * TODO get byte[] not String from BufferedReader [now: DecryptionError]
+	 * TRIED: .getBytes(), Base64decode, ByteArraInputstream(probably working, but not with real socket connect),...
 	 * @param client
 	 * @return
 	 * @throws IOException
@@ -75,17 +77,24 @@ public class Server {
 	private String readRSAMsg(Socket client) throws IOException, ClassNotFoundException {
 		ObjectInputStream inputStream = null;
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+		//int length = Integer.parseInt(bufferedReader.readLine());
+		//System.out.println(length);
+		//int length = Integer.parseInt(bufferedReader.readLine());
 		char[] buffer = new char[500];
 		int amount = bufferedReader.read(buffer, 0, 500);
-
 //		BufferedInputStream input = new BufferedInputStream(client.getInputStream());
 		byte[] mes = null;
+		
 		//while (input.read(mes) != -1);
 //		ByteArrayInputStream bInput = new ByteArrayInputStream();
 //		System.out.println(mes);
 //		bInput.read(mes);
-		message = new String(buffer, 0, amount);
-		mes = message.getBytes(Charset.forName("US-ASCII")	);
+		//message = new String(buffer, 0, amount);
+		client.getInputStream().read(mes,0,amount);
+//		Base64 decoder = new Base64();
+//		byte[] cookie = Base64.decodeBase64(message);
+//		System.out.println(cookie);
+		//mes = message.getBytes(Charset.forName("US-ASCII"));
 		//System.out.println(message);
 		System.out.println(mes);
 	    inputStream = new ObjectInputStream(new FileInputStream(method.PRIVATE_KEY_FILE));
