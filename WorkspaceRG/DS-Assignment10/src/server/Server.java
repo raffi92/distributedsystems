@@ -18,8 +18,11 @@ import encryption.EncryptionIF;
 import encryption.RC4;
 import encryption.RSA;
 import encryption.SimpleEncryption;
-// TODO wir haben jeweils ein private und ein public key file. in der angabe steht 4 files. 
-// dh. server muss irgendwie public key vom client verwenden oda so. 
+// TODO respond to client ACK, otherwise key files of client are useless
+// TODO add RSA to wrong-parameter-error-message in client and server 
+// TODO (optional) client should send a getPublicKey to server (public key needs no encryption) instead of reading server's file. Then use setKey with fetched public key
+// TODO (optional) rewrite encrypt decrypt in encryptionIF from int [] to byte [] such that internal representation is also byte array (no need to have two different methods for encrypt and decrpyt in EncryptionIF)
+
 public class Server {
 	int port = 11111;
 	private ServerSocket ssocket;
@@ -37,7 +40,7 @@ public class Server {
 			method = null;
 
 			if (args.length == 0) {
-				method = new RSA();
+				method = new RSA(EncryptionIF.pathPrefixServer);
 				encrypted = readRSAMsg(client);
 			} else if (args.length == 2) {
 				if (Integer.parseInt(args[1]) == 0)
@@ -71,14 +74,14 @@ public class Server {
 	private String readRSAMsg(Socket client) throws IOException, ClassNotFoundException {
 		InputStream in = client.getInputStream();
 		DataInputStream datain = new DataInputStream(in);
-
 		int len = datain.readInt();
 		byte[] data = new byte[len];
 		if (len > 0) {
 			datain.readFully(data);
 		}
 		message = Arrays.toString(data);
-		ObjectInputStream objInputStream = new ObjectInputStream(new FileInputStream(EncryptionIF.PRIVATE_KEY_FILE));
+		// use own private key to decrypt data
+		ObjectInputStream objInputStream = new ObjectInputStream(new FileInputStream(EncryptionIF.pathPrefixServer + EncryptionIF.PRIVATE_KEY_FILE));
 		final PrivateKey privateKey = (PrivateKey) objInputStream.readObject();
 		objInputStream.close();
 		return method.decrypt(data, privateKey);

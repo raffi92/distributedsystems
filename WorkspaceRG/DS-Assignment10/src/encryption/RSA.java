@@ -11,21 +11,20 @@ import java.security.PublicKey;
 import javax.crypto.Cipher;
 
 public class RSA extends EncryptionIF {
-
-	public RSA() {
-		if (!areKeysPresent()) {
-			generateKey();
+	public RSA(String pathPrefix) {
+		if (!areKeysPresent(pathPrefix)) {
+			generateKey(pathPrefix);
 		}
 	}
 
-	public static void generateKey() {
+	public static void generateKey(String pathPrefix) {
 		try {
 			final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(method);
 			keyGen.initialize(1024);
 			final KeyPair key = keyGen.generateKeyPair();
 
-			File privateKeyFile = new File(PRIVATE_KEY_FILE);
-			File publicKeyFile = new File(PUBLIC_KEY_FILE);
+			File privateKeyFile = new File(pathPrefix + PRIVATE_KEY_FILE);
+			File publicKeyFile = new File(pathPrefix + PUBLIC_KEY_FILE);
 			if (privateKeyFile.getParentFile() != null) {
 				privateKeyFile.getParentFile().mkdirs();
 			}
@@ -47,9 +46,9 @@ public class RSA extends EncryptionIF {
 
 	}
 
-	public static boolean areKeysPresent() {
-		File privateKey = new File(PRIVATE_KEY_FILE);
-		File publicKey = new File(PUBLIC_KEY_FILE);
+	public static boolean areKeysPresent(String pathPrefix) {
+		File privateKey = new File(pathPrefix + PRIVATE_KEY_FILE);
+		File publicKey = new File(pathPrefix + PUBLIC_KEY_FILE);
 
 		if (privateKey.exists() && publicKey.exists()) {
 			return true;
