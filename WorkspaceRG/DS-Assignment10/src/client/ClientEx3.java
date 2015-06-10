@@ -1,10 +1,12 @@
 package client;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -20,31 +22,39 @@ import encryption.RC4;
 import encryption.SimpleEncryption;
 import encryption.RSA;
 
-public class Client {
+public class ClientEx3 {
 	private String ip = "127.0.0.1"; // localhost
 	private int port = 11111;
 	private Socket socket;
 	private EncryptionIF method;
 	private String response;
 
-	public Client(String[] args) {
+	public ClientEx3(String[] args) {
 		try {
 			String message;
 			socket = new Socket(ip, port);
 			method = null;
-			if (args.length == 0) {
-				method = new RSA(EncryptionIF.pathPrefixClient);
-				message = enterMessage();
-				writeRSAMsg(socket, message);
-				System.out.println("Response: " + readRSAMsg(socket));
-			} else if (args.length == 2) {
+			method = new RSA(EncryptionIF.pathPrefixClient);
+			// rsa message is key for symmetric encryption
+			message = args[0];
+			writeRSAMsg(socket, message);
+			System.out.println("Response: " + readRSAMsg(socket));
+			if (args.length == 2) {
 				if (Integer.parseInt(args[1]) == 0)
 					method = new SimpleEncryption();
 				if (Integer.parseInt((args[1])) == 1)
 					method = new RC4();
 				method.setKey(args[0]);
-				message = enterMessage();
+				// send first
+				message = "hallo";
+				System.out.println("Client send: " + message);
 				writeMsg(socket, message);
+				System.out.println("Response:" + readMsg(socket));
+				// send second
+				message = "foo bar";
+				System.out.println("Client send: " + message);
+				writeMsg(socket, message);
+				System.out.println("Response:" + readMsg(socket));
 			} else {
 				System.out
 						.println("Usage: java client.class [key] [method] Wrong number of parameter. \nArgument 1 must be the key\nArgument 2 must be the selected method\n[method]: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
@@ -69,7 +79,7 @@ public class Client {
 		scanner.close();
 		return tmp;
 	}
-
+	// communication with symmetric encryption approaches
 	private void writeMsg(Socket socket, String message) throws IOException {
 		int[] messageInt = method.encrypt(message);
 		message = method.IntArrayToString(messageInt);
@@ -77,7 +87,19 @@ public class Client {
 		printWriter.print(message);
 		printWriter.flush();
 	}
-
+	// communication with symmetric encryption approaches
+	private String readMsg(Socket socket) throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		char[] buffer = new char[500];
+		int amount = -1;
+		while (amount <= 0){
+			amount = bufferedReader.read(buffer, 0, 500);
+		}
+		response = new String(buffer, 0, amount);
+		int[] toDecrypt = method.StringToIntArray(response);
+		return method.decrypt(toDecrypt);
+	}
+	// communication with RSA approach
 	private void writeRSAMsg(Socket socket, String message) {
 		ObjectInputStream inputStream = null;
 		try {
@@ -96,7 +118,7 @@ public class Client {
 		}
 
 	}
-
+	// communication with RSA approach
 	private String readRSAMsg(Socket client) throws IOException, ClassNotFoundException {
 		InputStream in = client.getInputStream();
 		DataInputStream datain = new DataInputStream(in);
@@ -115,6 +137,6 @@ public class Client {
 	}
 
 	public static void main(String[] args) {
-		new Client(args);
+		new ClientEx3(args);
 	}
 }

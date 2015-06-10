@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.PrivateKey;
@@ -23,7 +25,7 @@ import encryption.SimpleEncryption;
 // TODO (optional) client should send a getPublicKey to server (public key needs no encryption) instead of reading server's file. Then use setKey with fetched public key
 // TODO (optional) rewrite encrypt decrypt in encryptionIF from int [] to byte [] such that internal representation is also byte array (no need to have two different methods for encrypt and decrpyt in EncryptionIF)
 
-public class Server {
+public class ServerEx3 {
 	int port = 11111;
 	private ServerSocket ssocket;
 	private Socket client;
@@ -31,26 +33,35 @@ public class Server {
 	private String encrypted;
 	private EncryptionIF method;
 
-	public Server(String[] args) throws ClassNotFoundException {
+	public ServerEx3(String[] args) throws ClassNotFoundException {
 		try {
 			ssocket = new ServerSocket(port);
 			System.out.println("Waiting for client");
 			client = connect();
 			System.out.println("connected");
-			method = null;
-
-			if (args.length == 0) {
-				method = new RSA(EncryptionIF.pathPrefixServer);
-				encrypted = readRSAMsg(client);
-				//ack
-				writeRSAMsg(client, "ACK");
-			} else if (args.length == 2) {
-				if (Integer.parseInt(args[1]) == 0)
+			method = new RSA(EncryptionIF.pathPrefixServer);
+			encrypted = readRSAMsg(client);
+			//ack
+			writeRSAMsg(client, "ACK");
+			printAll();
+			// select method after key exchange
+			if (args.length == 1) {
+				if (Integer.parseInt(args[0]) == 0)
 					method = new SimpleEncryption();
-				if (Integer.parseInt((args[1])) == 1)
+				if (Integer.parseInt((args[0])) == 1)
 					method = new RC4();
-				method.setKey(args[0]);
+				// set key for symmetric encryption
+				method.setKey(encrypted);
+				// receive first
 				encrypted = readMsg(client);
+				printAll();
+				System.out.println("Client send: ACK");
+				writeMsg(client, "ACK");
+				// receice second
+				encrypted = readMsg(client);
+				printAll();
+				System.out.println("Client send: ACK");
+				writeMsg(client, "ACK");
 			} else {
 				System.out
 						.println("Usage: java client.class [key] [method] Wrong number of parameter. \nArgument 1 must be the key\nArgument 2 must be the selected method\n[method]: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
@@ -60,19 +71,21 @@ public class Server {
 				System.out.println("Wrong method: \n0 ... SimpleEncryption\n1 ... RC4 Encryption\n");
 				System.exit(0);
 			}
-
-			printAll();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public Socket connect() {
+		try {
+			return ssocket.accept();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-	/**
-	 * @param client
-	 * @return
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
+	// communication with RSA approach
 	private String readRSAMsg(Socket client) throws IOException, ClassNotFoundException {
 		InputStream in = client.getInputStream();
 		DataInputStream datain = new DataInputStream(in);
@@ -89,15 +102,7 @@ public class Server {
 		return method.decrypt(data, privateKey);
 	}
 
-	public Socket connect() {
-		try {
-			return ssocket.accept();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
+	// communication with RSA approach
 	private void writeRSAMsg(Socket socket, String message) {
 		ObjectInputStream inputStream = null;
 		try {
@@ -116,13 +121,26 @@ public class Server {
 		}
 
 	}
-
+	// communication with symmetric encryption approaches
+	private void writeMsg(Socket socket, String message) throws IOException {
+		int[] messageInt = method.encrypt(message);
+		message = method.IntArrayToString(messageInt);
+		PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+		printWriter.print(message);
+		printWriter.flush();
+	}
+	// communication with symmetric encryption approaches
 	private String readMsg(Socket socket) throws IOException {
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		char[] buffer = new char[500];
-		int amount = bufferedReader.read(buffer, 0, 500);
-		message = new String(buffer, 0, amount);
-		int[] toDecrypt = method.StringToIntArray(message);
+		
+		int amount = -1;
+		while (amount <= 0){
+			amount = bufferedReader.read(buffer, 0, 500);
+		}
+		String received = new String(buffer, 0, amount);
+		message = received;		// for encrypted output in printAll()
+		int[] toDecrypt = method.StringToIntArray(received);
 		return method.decrypt(toDecrypt);
 	}
 
@@ -133,6 +151,6 @@ public class Server {
 	}
 
 	public static void main(String[] args) throws ClassNotFoundException {
-		new Server(args);
+		new ServerEx3(args);
 	}
 }
