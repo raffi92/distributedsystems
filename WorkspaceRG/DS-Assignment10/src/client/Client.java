@@ -1,12 +1,12 @@
 package client;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -75,16 +75,13 @@ public class Client {
 	private void writeRSAMsg(Socket socket, String message) {
 		ObjectInputStream inputStream = null;
 	      try {
-			inputStream = new ObjectInputStream(new FileInputStream(method.PUBLIC_KEY_FILE));
+			inputStream = new ObjectInputStream(new FileInputStream(EncryptionIF.PUBLIC_KEY_FILE));
 		    final PublicKey publicKey = (PublicKey) inputStream.readObject();
 		    final byte[] cipherText = method.encrypt(message, publicKey);
-		    System.out.println(cipherText);
-//		    ByteArrayOutputStream bOutput = new ByteArrayOutputStream(12);
-//		    bOutput.write(cipherText);
-		    
-			PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-			printWriter.print(cipherText);
-			printWriter.flush();
+			OutputStream out = socket.getOutputStream();
+			DataOutputStream dataout = new DataOutputStream(out);
+			dataout.writeInt(cipherText.length);
+			dataout.write(cipherText, 0, cipherText.length);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
