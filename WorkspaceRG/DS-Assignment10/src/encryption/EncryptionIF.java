@@ -12,23 +12,23 @@ public abstract class EncryptionIF {
 
 	public void setKey(String keyString) {
 	}
-
+	// rc4 int[] based
 	public int[] encrypt(final String plaintext) {
 		return null;
 	}
-
+	// rsa byte [] based
 	public byte[] encrypt(String text, PublicKey key) {
 		return null;
 	}
-
+	// rsa byte [] based
 	public String decrypt(byte[] text, PrivateKey key) {
 		return null;
 	}
-
+	// rc4 int[] based
 	public String decrypt(final int[] ciphertext) {
 		return null;
 	}
-
+	// convert for rc4
 	public int[] StringToIntArray(String input) {
 		char[] tmp = input.toCharArray();
 		int[] output = new int[tmp.length];
@@ -37,7 +37,7 @@ public abstract class EncryptionIF {
 		}
 		return output;
 	}
-
+	// convert for rc4
 	public String IntArrayToString(int[] input) {
 		char[] tmp = new char[input.length];
 		for (int i = 0; i < input.length; i++) {

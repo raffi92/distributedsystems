@@ -1,7 +1,11 @@
 package encryption;
 
 import java.util.Arrays;
-
+/**
+ * 
+ * @author csl
+ * imitate RC4 encryption approach based on int array
+ */
 public class RC4 extends EncryptionIF{
 	private final int[] S = new int[256];
 	private int keylen;
@@ -27,7 +31,6 @@ public class RC4 extends EncryptionIF{
 		}
 	}
 
-	@Override
 	public int[] encrypt(final String plaintext) {
 		final int[] plain = StringToIntArray(plaintext);
 		final int[] ciphertext = new int[plain.length];
@@ -46,7 +49,6 @@ public class RC4 extends EncryptionIF{
 		return ciphertext;
 	}
 
-	@Override
 	public String decrypt(final int[] ciphertext) {
 		return IntArrayToString(encrypt(IntArrayToString(ciphertext)));
 	}

@@ -16,7 +16,7 @@ public class RSA extends EncryptionIF {
 			generateKey(pathPrefix);
 		}
 	}
-
+	// gen keys if not exist
 	public static void generateKey(String pathPrefix) {
 		try {
 			final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(method);
@@ -45,7 +45,7 @@ public class RSA extends EncryptionIF {
 		}
 
 	}
-
+	// test keys exist
 	public static boolean areKeysPresent(String pathPrefix) {
 		File privateKey = new File(pathPrefix + PRIVATE_KEY_FILE);
 		File publicKey = new File(pathPrefix + PUBLIC_KEY_FILE);
@@ -55,7 +55,7 @@ public class RSA extends EncryptionIF {
 		}
 		return false;
 	}
-
+	
 	public byte[] encrypt(String text, PublicKey key) {
 		byte[] cipherText = null;
 		try {
